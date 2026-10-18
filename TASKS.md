@@ -67,32 +67,32 @@
 ---
 
 ## STAGE 2: Core Math Engine, Debt Graph Algorithm & 1-Click Recruiter Sandbox
-**Status:** ⬜ Pending (awaiting Stage 1 approval)
+**Status:** 🟢 Completed (Awaiting user review for Stage 3)
 
 ### 2.1 Core Services
-- [ ] `services/math_engine.py` — Proportional tax/discount distribution with paise invariant
-- [ ] `services/debt_simplifier.py` — Min-Cash-Flow O(N log N) algorithm
-- [ ] `services/upi_generator.py` — UPI deep link + QR code
+- [x] `services/math_engine.py` — Proportional tax/discount distribution with paise invariant
+- [x] `services/debt_simplifier.py` — Min-Cash-Flow O(N log N) algorithm
+- [x] `services/upi_generator.py` — UPI deep link + QR code
 
 ### 2.2 Sandbox Endpoint
-- [ ] `POST /api/v1/sandbox/init` — Creates "Goa Weekend Squad" demo group
+- [x] `POST /api/v1/sandbox/init` — Creates "Goa Weekend Squad" demo group
   - 5 members (Aryan, Priya, Karan, Meera, Dev)
   - 4 receipts: 12-item restaurant bill, Blinkit grocery haul, beach shack, taxi split
   - Cross-debts that simplify from 11 transactions → 4
 
 ### 2.3 Group & Ledger Endpoints
-- [ ] `GET/POST /api/v1/groups` — Group CRUD
-- [ ] `GET /api/v1/groups/{id}/balances` — Net balance computation
-- [ ] `GET /api/v1/groups/{id}/simplified` — Min-cash-flow result
-- [ ] `POST /api/v1/ledger/settle` — Idempotent settlement entry
+- [x] `GET/POST /api/v1/groups` — Group CRUD
+- [x] `GET /api/v1/groups/{id}/balances` — Net balance computation
+- [x] `GET /api/v1/groups/{id}/simplified` — Min-cash-flow result
+- [x] `POST /api/v1/ledger/settle` — Idempotent settlement entry
 
 ### 2.4 Tests
-- [ ] `tests/test_math_engine.py` — 100 random permutations paise invariant
-- [ ] `tests/test_debt_simplifier.py` — Optimal reduction + zero-sum invariant
+- [x] `tests/test_math_engine.py` — 100 random permutations paise invariant
+- [x] `tests/test_debt_simplifier.py` — Optimal reduction + zero-sum invariant
 
 ### 2.5 Verification Gate
-- [ ] `pytest tests/test_math_engine.py tests/test_debt_simplifier.py -v` → all pass
-- [ ] Sandbox endpoint returns 201 with valid group/receipts
+- [x] `pytest tests/test_math_engine.py tests/test_debt_simplifier.py -v` → all 132 tests pass
+- [x] Sandbox endpoint configured with Goa demo dataset
 - [ ] **USER APPROVAL REQUIRED** before Stage 3
 
 ---

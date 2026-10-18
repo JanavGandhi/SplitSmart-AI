@@ -19,12 +19,13 @@ from fastapi.responses import JSONResponse
 from app.config import get_settings
 from app.database import create_engine, init_db
 from app.api.v1.health import router as health_router
+from app.api.v1.groups import router as groups_router
+from app.api.v1.sandbox import router as sandbox_router
+from app.api.v1.ledger import router as ledger_router
 from app.api.v1.stubs import (
     auth_router,
-    groups_router,
     receipts_router,
     rooms_router,
-    sandbox_router,
     copilot_router,
     metrics_router,
 )
@@ -115,6 +116,7 @@ def create_app() -> FastAPI:
     app.include_router(receipts_router, prefix=api_prefix)
     app.include_router(rooms_router, prefix=api_prefix)
     app.include_router(sandbox_router, prefix=api_prefix)
+    app.include_router(ledger_router, prefix=api_prefix)
     app.include_router(copilot_router, prefix=api_prefix)
     app.include_router(metrics_router, prefix=api_prefix)
 

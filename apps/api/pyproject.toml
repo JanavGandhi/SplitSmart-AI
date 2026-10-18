@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 name = "splitsmart-api"
 version = "1.0.0"
 description = "SplitSmart AI — FastAPI Backend"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 dependencies = [
     # Web framework
     "fastapi[standard]>=0.115.0",
