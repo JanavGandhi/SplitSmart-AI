@@ -22,9 +22,9 @@ from app.api.v1.health import router as health_router
 from app.api.v1.groups import router as groups_router
 from app.api.v1.sandbox import router as sandbox_router
 from app.api.v1.ledger import router as ledger_router
+from app.api.v1.receipts import router as receipts_router
 from app.api.v1.stubs import (
     auth_router,
-    receipts_router,
     rooms_router,
     copilot_router,
     metrics_router,

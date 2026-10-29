@@ -98,28 +98,30 @@
 ---
 
 ## STAGE 3: Async Vision AI Receipt Pipeline & Real-Time SSE Progress
-**Status:** ⬜ Pending
+**Status:** 🟢 Completed (Awaiting user review for Stage 4)
 
 ### 3.1 Celery Worker
-- [ ] `worker/celery_app.py` — Celery app with Redis broker
-- [ ] Receipt processing task: upload → OCR → validate → ready
+- [x] `worker/celery_app.py` — Celery app with Redis broker
+- [x] `worker/tasks.py` — Full receipt processing pipeline task: UPLOADING → OCR_EXTRACTING → VALIDATING_MATH → READY_FOR_CLAIMS
 
 ### 3.2 Vision OCR Service
-- [ ] `services/vision_ocr.py` — Gemini Vision structured extraction
-- [ ] Mock OCR fallback when GEMINI_API_KEY not set
-- [ ] Pydantic output schema for receipt extraction
+- [x] `services/vision_ocr.py` — Gemini Vision structured extraction (gemini-2.0-flash)
+- [x] Mock OCR fallback when GEMINI_API_KEY not set (restaurant + grocery variants)
+- [x] Pydantic output schema (OCRExtractedReceipt + OCRLineItem) with field coercion
 
 ### 3.3 Receipt Upload API
-- [ ] `POST /api/v1/receipts/upload` → 202 Accepted + job_id
-- [ ] `GET /api/v1/receipts/{id}/events` → SSE stream
-- [ ] Pipeline stages: UPLOADING → OCR_EXTRACTING → VALIDATING_MATH → READY_FOR_CLAIMS
+- [x] `POST /api/v1/receipts/upload` → 202 Accepted + job_id + sse_url
+- [x] `GET /api/v1/receipts/{id}/events` → SSE stream (Redis Pub/Sub relay)
+- [x] `GET /api/v1/receipts/{id}` → Receipt status + line items
+- [x] `GET /api/v1/receipts/room/{room_code}` → Lookup by room code
+- [x] Pipeline stages: UPLOADING → OCR_EXTRACTING → VALIDATING_MATH → READY_FOR_CLAIMS
 
 ### 3.4 Tests
-- [ ] Integration test: upload sample image → poll SSE → verify DB line items
+- [x] `tests/test_receipt_pipeline.py` — 23 tests (mock OCR, paise invariant, field coercion, pipeline logic, upload API, SSE)
 
 ### 3.5 Verification Gate
-- [ ] Receipt pipeline integration test passes
-- [ ] **USER APPROVAL REQUIRED** before Stage 4
+- [x] `pytest tests/test_receipt_pipeline.py -v` → all 23 pass
+- [x] Full suite: 162 tests passing
 
 ---
 

@@ -20,15 +20,6 @@ async def create_guest():
     return {"detail": "Not implemented yet — coming in Stage 4"}
 
 
-# ── Receipts ──────────────────────────────────────────────────────────────────
-receipts_router = APIRouter(prefix="/receipts", tags=["receipts"])
-
-
-@receipts_router.post("/upload", status_code=501)
-async def upload_receipt():
-    return {"detail": "Not implemented yet — coming in Stage 3"}
-
-
 # ── Rooms ─────────────────────────────────────────────────────────────────────
 rooms_router = APIRouter(prefix="/rooms", tags=["rooms"])
 

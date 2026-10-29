@@ -1,21 +1,9 @@
-"""Celery worker — stub for Stage 3 implementation."""
-# Full implementation in Stage 3: Async Vision AI Receipt Pipeline
-from celery import Celery
-from app.config import get_settings
+"""
+Celery application instance — importable by workers and the FastAPI app.
 
-settings = get_settings()
+Start the worker with:
+    celery -A app.worker.celery_app worker --loglevel=info
+"""
+from app.worker.tasks import celery_app
 
-celery_app = Celery(
-    "splitsmart",
-    broker=settings.celery_broker_url,
-    backend=settings.celery_result_backend,
-)
-
-celery_app.conf.update(
-    task_serializer="json",
-    accept_content=["json"],
-    result_serializer="json",
-    timezone="Asia/Kolkata",
-    enable_utc=True,
-    task_track_started=True,
-)
+__all__ = ["celery_app"]
