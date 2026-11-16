@@ -9,7 +9,7 @@
 [![Redis](https://img.shields.io/badge/Cache%20%26%20Broker-Redis_7-DC382D.svg?logo=redis&logoColor=white)](https://redis.io)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-170%20Passed-success.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-174%20Passed-success.svg)]()
 
 ---
 
@@ -232,7 +232,7 @@ pytest tests/test_math_engine.py tests/test_debt_simplifier.py -v
 ### Verified Test Highlights:
 - **100 Randomized Permutation Tests:** Generates 100 receipts with random totals, multiple claimants, arbitrary GST, delivery fees, and discounts. Verifies that the sum of claimant portions matches the receipt total with **0 paise deviation**.
 - **Min-Cash-Flow Invariant Tests:** Verifies circular debt elimination (e.g. $A \to B \to C \to A$), complex multi-debtor graph convergence, and balance preservation across all participants.
-- **170 Tests Passing.**
+- **174 Tests Passing.**
 
 ---
 
@@ -244,7 +244,7 @@ pytest tests/test_math_engine.py tests/test_debt_simplifier.py -v
 | **Stage 2** | Core Math Engine, Debt Simplifier & Sandbox | 🟢 Completed | Largest Remainder Method, Min-Cash-Flow algorithm, UPI QR codes, 1-Click Goa Squad sandbox seeder. |
 | **Stage 3** | Async Vision AI Receipt Pipeline & SSE | 🟢 Completed | Gemini 2.5 Flash OCR, Celery asynchronous processing queue, live Server-Sent Events progress tracking. |
 | **Stage 4** | Multiplayer No-Login WebSocket Claim Room | 🟢 Completed | Room-scoped guest JWTs, Redis Pub/Sub claims, paise recalculation, roommate simulator, and idempotent ledger finalization. |
-| **Stage 5** | Production Next.js UI & Interactive Graphs | ⬜ Planned | Interactive D3/SVG debt graph, live claim room UI, dark mode fintech dashboard. |
+| **Stage 5** | Next.js UI & Interactive Graphs | 🟡 Implemented | Dashboard, live claim room, group debt graph, UPI payment flow, metrics. Full backend-connected walkthrough requires PostgreSQL and Redis; Copilot chat remains a backend stub. |
 | **Stage 6** | Public Telemetry & Production Hardening | ⬜ Planned | Prometheus metrics, audit logging, rate limiting, and deployment workflows. |
 
 ### Stage 4 room API
@@ -254,6 +254,15 @@ pytest tests/test_math_engine.py tests/test_debt_simplifier.py -v
 - Send `{"event":"ITEM_CLAIM_TOGGLED","item_id":"<line-item-uuid>"}` to toggle an item claim, or `{"event":"SIMULATE_FRIENDS"}` to add three demo participants.
 - `POST /api/v1/rooms/{room_code}/finalize` requires the guest JWT as a Bearer token and JSON containing `payer_user_id` and `idempotency_key`. All line items must be claimed before finalization.
 - Apply the finalization idempotency column with `alembic upgrade head` from `apps/api`.
+
+### Stage 5 API integrations
+
+- `GET /api/v1/groups/{group_id}/receipts` loads the group's receipts and claim data.
+- `POST /api/v1/ledger/upi-intent` returns a UPI URI and an inline SVG QR code. Recording a settlement does not verify a bank transfer.
+- `GET /api/v1/metrics` returns database-derived counts.
+- The dashboard includes a Copilot chat UI, but `POST /api/v1/copilot/chat` remains unimplemented and returns HTTP 501.
+
+The Stage 5 pages are `/dashboard`, `/groups/{id}`, `/room/{code}`, and `/metrics`. A complete live walkthrough needs the API, PostgreSQL, and Redis running.
 
 ---
 

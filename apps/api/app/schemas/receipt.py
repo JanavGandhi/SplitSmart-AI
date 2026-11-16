@@ -33,6 +33,7 @@ class ClaimResponse(BaseSchema):
 class ReceiptResponse(BaseSchema):
     id: UUID
     group_id: UUID
+    paid_by: UUID | None
     room_code: str
     merchant_name: str | None
     receipt_date: date | None

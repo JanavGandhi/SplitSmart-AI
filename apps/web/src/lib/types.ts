@@ -1,10 +1,3 @@
-/**
- * TypeScript types matching the FastAPI/Pydantic schemas.
- * Keep in sync with apps/api/app/schemas/
- */
-
-// ── Enums ─────────────────────────────────────────────────────────────────
-
 export type ReceiptStatus =
   | "QUEUED"
   | "PROCESSING"
@@ -15,32 +8,12 @@ export type ReceiptStatus =
 
 export type EntryType = "EXPENSE_SHARE" | "SETTLEMENT";
 
-// ── Users ─────────────────────────────────────────────────────────────────
-
-export interface User {
-  id: string;
-  email: string | null;
-  display_name: string;
-  upi_id: string | null;
-  avatar_color: string;
-  is_guest: boolean;
-  created_at: string;
-}
-
 export interface UserPublic {
   id: string;
   display_name: string;
   avatar_color: string;
   is_guest: boolean;
 }
-
-export interface TokenResponse {
-  access_token: string;
-  token_type: "bearer";
-  user: User;
-}
-
-// ── Groups ────────────────────────────────────────────────────────────────
 
 export interface Group {
   id: string;
@@ -62,8 +35,6 @@ export interface GroupMember {
 export interface GroupDetail extends Group {
   members: GroupMember[];
 }
-
-// ── Receipts ──────────────────────────────────────────────────────────────
 
 export interface ItemClaim {
   id: string;
@@ -88,6 +59,7 @@ export interface LineItem {
 export interface Receipt {
   id: string;
   group_id: string;
+  paid_by: string | null;
   room_code: string;
   merchant_name: string | null;
   receipt_date: string | null;
@@ -111,73 +83,142 @@ export interface ReceiptUploadResponse {
   sse_url: string;
 }
 
-// ── Debt Simplifier ───────────────────────────────────────────────────────
+export interface ReceiptProgressEvent {
+  event: string;
+  receipt_id?: string;
+  stage?: string;
+  message?: string;
+  progress?: number;
+  [key: string]: unknown;
+}
 
-export interface DebtEdge {
-  from_user: UserPublic;
-  to_user: UserPublic;
+export interface GroupBalance {
+  user_id: string;
+  display_name: string;
+  avatar_color: string;
+  net_balance_paise: number;
+  status: "creditor" | "debtor" | "settled";
+}
+
+export interface GroupBalancesResponse {
+  group_id: string;
+  group_name: string;
+  currency: string;
+  balances: GroupBalance[];
+  total_entries: number;
+}
+
+export interface Settlement {
+  from_user_id: string;
+  from_display_name: string;
+  from_avatar_color: string;
+  to_user_id: string;
+  to_display_name: string;
+  to_avatar_color: string;
+  to_upi_id: string | null;
   amount_paise: number;
+  amount_display: string;
 }
 
 export interface SimplifiedDebtResult {
-  raw_edges: DebtEdge[];
-  simplified_edges: DebtEdge[];
+  group_id: string;
+  group_name: string;
+  currency: string;
+  original_transactions: number;
+  simplified_transactions: number;
   transactions_saved: number;
-  net_balances: Record<string, number>; // user_id -> paise (+credit, -debt)
+  zero_sum_verified?: boolean;
+  settlements: Settlement[];
 }
 
-// ── UPI ───────────────────────────────────────────────────────────────────
+export interface GuestJoinResponse {
+  access_token: string;
+  token_type: "bearer";
+  expires_in: number;
+  user: UserPublic;
+}
+
+export type RoomEvent =
+  | {
+      event: "PARTICIPANT_JOINED";
+      user_id: string;
+      display_name: string;
+      avatar_color: string;
+      simulated?: boolean;
+    }
+  | {
+      event: "ITEM_CLAIM_TOGGLED";
+      item_id: string;
+      user_id: string;
+      action: "claimed" | "unclaimed";
+      fraction: { numerator: number; denominator: number };
+    }
+  | {
+      event: "TAX_RECALCULATED";
+      per_user_totals: Record<string, number>;
+      invariant_holds: boolean;
+    }
+  | {
+      event: "RECEIPT_LOCKED";
+      receipt_id: string;
+      final_splits: Record<string, number>;
+    }
+  | { event: "ERROR"; detail: string; status_code?: number };
+
+export interface FinalizeResponse {
+  receipt_id: string;
+  status: ReceiptStatus;
+  created: boolean;
+  payer_user_id: string;
+  final_splits: Record<string, number>;
+  settlements: Array<{
+    from_user_id: string;
+    to_user_id: string;
+    amount_paise: number;
+  }>;
+}
+
+export interface SandboxResponse {
+  group_id: string;
+  group_name: string;
+  invite_code: string;
+  members: Array<{
+    user_id: string;
+    display_name: string;
+    avatar_color: string;
+    upi_id: string | null;
+  }>;
+  receipts: string[];
+  total_receipts: number;
+  total_ledger_entries: number;
+}
+
+export interface SystemMetrics {
+  status: "ok";
+  total_users: number;
+  total_groups: number;
+  total_receipts: number;
+  active_rooms: number;
+  ledger_entries: number;
+  total_paise_tracked: number;
+}
 
 export interface UPIPayment {
   uri: string;
   qr_base64: string;
   amount_rupees: string;
+  payee_name: string;
+  payee_upi_id: string;
   note: string;
 }
 
-// ── WebSocket Events ──────────────────────────────────────────────────────
-
-export type WSEventType =
-  | "PARTICIPANT_JOINED"
-  | "ITEM_CLAIM_TOGGLED"
-  | "TAX_RECALCULATED"
-  | "RECEIPT_LOCKED"
-  | "SIMULATE_FRIENDS"
-  | "ERROR";
-
-export interface WSEvent {
-  type: WSEventType;
-  payload: unknown;
-  timestamp: string;
-}
-
-export interface ParticipantJoinedPayload {
-  user_id: string;
-  display_name: string;
-  avatar_color: string;
-}
-
-export interface ItemClaimToggledPayload {
-  item_id: string;
-  user_id: string;
-  action: "claim" | "unclaim";
-  fraction: { numerator: number; denominator: number };
-}
-
-export interface TaxRecalculatedPayload {
-  per_user_totals: Record<string, number>; // user_id -> paise
-}
-
-// ── Metrics ───────────────────────────────────────────────────────────────
-
-export interface SystemMetrics {
-  redis_cache_hit_ratio: number;
-  avg_ocr_latency_ms: number;
-  p95_ocr_latency_ms: number;
-  total_paise_balanced: number;
-  active_ws_rooms: number;
-  total_users: number;
-  total_groups: number;
-  total_receipts: number;
-  ai_token_cost_usd: number;
+export interface HealthResponse {
+  status: "ok" | "degraded";
+  app: string;
+  version: string;
+  environment: string;
+  timestamp: number;
+  db: string;
+  redis: string;
+  ocr_mode: "mock" | "gemini";
 }

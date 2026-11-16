@@ -21,7 +21,6 @@ from __future__ import annotations
 import asyncio
 import json
 import uuid
-from datetime import datetime, timezone
 from pathlib import Path
 
 import shortuuid
@@ -32,8 +31,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 
-from app.config import get_settings, Settings
+from app.config import Settings, get_settings
 from app.database import get_db
+from app.models.item_claim import ItemClaim
 from app.models.receipt import Receipt, ReceiptStatus
 from app.models.receipt_line_item import ReceiptLineItem
 from app.schemas.receipt import ReceiptResponse, ReceiptUploadResponse
@@ -284,7 +284,9 @@ async def get_receipt(
     result = await db.execute(
         select(Receipt)
         .options(
-            selectinload(Receipt.line_items).selectinload(ReceiptLineItem.claims)
+            selectinload(Receipt.line_items)
+            .selectinload(ReceiptLineItem.claims)
+            .selectinload(ItemClaim.user)
         )
         .where(Receipt.id == receipt_uuid)
     )
@@ -307,7 +309,9 @@ async def get_receipt_by_room_code(
     result = await db.execute(
         select(Receipt)
         .options(
-            selectinload(Receipt.line_items).selectinload(ReceiptLineItem.claims)
+            selectinload(Receipt.line_items)
+            .selectinload(ReceiptLineItem.claims)
+            .selectinload(ItemClaim.user)
         )
         .where(Receipt.room_code == room_code.upper())
     )

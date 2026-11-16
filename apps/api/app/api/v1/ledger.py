@@ -14,8 +14,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.group import Group
-from app.models.ledger_entry import LedgerEntry, EntryType
+from app.models.group_member import GroupMember
+from app.models.ledger_entry import EntryType, LedgerEntry
+from app.models.user import User
 from app.schemas.common import BaseSchema
+from app.services.upi_generator import generate_settlement_link
 
 router = APIRouter(prefix="/ledger", tags=["ledger"])
 
@@ -41,6 +44,61 @@ class SettlementResponse(BaseSchema):
     created: bool  # True if new, False if duplicate (idempotent)
 
 
+class UPIPaymentRequest(BaseSchema):
+    group_id: uuid.UUID
+    creditor_user_id: uuid.UUID
+    amount_paise: int = Field(..., gt=0)
+
+
+class UPIPaymentResponse(BaseSchema):
+    uri: str
+    qr_base64: str
+    amount_rupees: str
+    payee_name: str
+    payee_upi_id: str
+    note: str
+
+
+@router.post("/upi-intent", response_model=UPIPaymentResponse)
+async def create_upi_intent(
+    payload: UPIPaymentRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a UPI deep link and QR code for a group creditor."""
+    result = await db.execute(
+        select(User, Group.name)
+        .join(GroupMember, GroupMember.user_id == User.id)
+        .join(Group, Group.id == GroupMember.group_id)
+        .where(
+            Group.id == payload.group_id,
+            User.id == payload.creditor_user_id,
+        )
+    )
+    row = result.one_or_none()
+    if row is None:
+        raise HTTPException(status_code=404, detail="Creditor is not a member of this group")
+
+    creditor, group_name = row
+    if not creditor.upi_id:
+        raise HTTPException(status_code=422, detail="Creditor has no UPI ID configured")
+
+    payment = generate_settlement_link(
+        debtor_name="SplitSmart member",
+        creditor_name=creditor.display_name,
+        creditor_upi_id=creditor.upi_id,
+        amount_paise=payload.amount_paise,
+        group_name=group_name,
+    )
+    return UPIPaymentResponse(
+        uri=payment.uri,
+        qr_base64=payment.qr_base64,
+        amount_rupees=payment.amount_rupees,
+        payee_name=payment.payee_name,
+        payee_upi_id=payment.payee_upi_id,
+        note=payment.note,
+    )
+
+
 @router.post("/settle", response_model=SettlementResponse, status_code=status.HTTP_201_CREATED)
 async def record_settlement(
     payload: SettlementRequest,
@@ -60,11 +118,12 @@ async def record_settlement(
     existing = existing_result.scalar_one_or_none()
 
     if existing:
+        is_settlement = existing.entry_type == EntryType.SETTLEMENT
         return SettlementResponse(
             id=existing.id,
             group_id=existing.group_id,
-            from_user_id=existing.from_user_id,
-            to_user_id=existing.to_user_id,
+            from_user_id=existing.to_user_id if is_settlement else existing.from_user_id,
+            to_user_id=existing.from_user_id if is_settlement else existing.to_user_id,
             amount_paise=existing.amount_paise,
             entry_type=existing.entry_type.value,
             idempotency_key=existing.idempotency_key,
@@ -89,8 +148,9 @@ async def record_settlement(
     entry = LedgerEntry(
         id=uuid.uuid4(),
         group_id=payload.group_id,
-        from_user_id=payload.from_user_id,
-        to_user_id=payload.to_user_id,
+        # A payment reverses the original debt edge in the balance ledger.
+        from_user_id=payload.to_user_id,
+        to_user_id=payload.from_user_id,
         amount_paise=payload.amount_paise,
         entry_type=EntryType.SETTLEMENT,
         idempotency_key=payload.idempotency_key,
@@ -101,8 +161,8 @@ async def record_settlement(
     return SettlementResponse(
         id=entry.id,
         group_id=entry.group_id,
-        from_user_id=entry.from_user_id,
-        to_user_id=entry.to_user_id,
+        from_user_id=payload.from_user_id,
+        to_user_id=payload.to_user_id,
         amount_paise=entry.amount_paise,
         entry_type=entry.entry_type.value,
         idempotency_key=entry.idempotency_key,

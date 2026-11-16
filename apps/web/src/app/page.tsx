@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import DemoLaunchButton from "@/components/DemoLaunchButton";
 
 export const metadata: Metadata = {
   title: "SplitSmart AI — Smart Receipt Splitting & Expense Tracking",
@@ -103,7 +104,7 @@ export default function LandingPage() {
               Live Metrics
             </Link>
             <a
-              href="https://github.com"
+              href="https://github.com/JanavGandhi/SplitSmart-AI"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition-colors"
@@ -155,14 +156,9 @@ export default function LandingPage() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
-          <button
-            id="launch-sandbox-btn"
-            className="btn-primary text-base px-8 py-4 rounded-2xl"
-            style={{ fontSize: "1rem" }}
-          >
-            🚀 Launch Instant Demo
-            <span className="text-xs opacity-70 font-normal ml-1">(No Login)</span>
-          </button>
+          <DemoLaunchButton
+            className="btn-primary rounded-2xl px-8 py-4 text-base"
+          />
           <Link
             href="/metrics"
             className="btn-secondary text-base px-8 py-4 rounded-2xl"
@@ -305,7 +301,7 @@ export default function LandingPage() {
             <Link href="/api/docs" className="hover:text-white transition-colors">API Docs</Link>
             <Link href="/metrics" className="hover:text-white transition-colors">Metrics</Link>
             <a
-              href="https://github.com"
+              href="https://github.com/JanavGandhi/SplitSmart-AI"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-white transition-colors"

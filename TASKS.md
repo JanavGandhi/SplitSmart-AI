@@ -41,7 +41,7 @@
 
 ### 1.6 API Routes (`apps/api/app/api/v1/`)
 - [x] `health.py` — GET /api/v1/health (DB ping + Redis ping)
-- [x] Stub routers for: auth, groups, receipts, rooms_ws, copilot, metrics (return 501 for now)
+- [x] Initial stub routers for auth, groups, receipts, rooms_ws, copilot, and metrics
 
 ### 1.7 Alembic Migrations
 - [x] Initialize Alembic in `apps/api/alembic/`
@@ -156,31 +156,40 @@
 ---
 
 ## STAGE 5: Next.js Frontend — All Pages + Interactive Visualizations
-**Status:** ⬜ Pending
+**Status:** 🟡 Implemented; live end-to-end walkthrough awaits PostgreSQL/Redis runtime
 
 ### 5.1 Pages
-- [ ] Landing page — Dark fintech hero, "Launch Instant Demo" button
-- [ ] `/room/[code]` — Multiplayer claim room UI
-- [ ] `/groups/[id]` — Debt simplifier graph + UPI settle modal
-- [ ] `/dashboard` — Group overview + AI Copilot drawer
-- [ ] `/metrics` — Public telemetry dashboard
+- [x] Landing page — Dark fintech hero, "Launch Instant Demo" button
+- [x] `/room/[code]` — Multiplayer claim room UI
+- [x] `/groups/[id]` — Debt simplifier graph + UPI settle modal
+- [x] `/dashboard` — Group overview + Copilot chat drawer UI
+- [x] `/metrics` — Live database-backed metrics dashboard
 
 ### 5.2 Components
-- [ ] ReceiptCard — Line item list with claim toggles
-- [ ] AvatarPill — Colored participant indicator
-- [ ] DebtGraph — SVG node-link visualization (raw vs simplified)
-- [ ] UPISettleModal — QR code + deep link button
-- [ ] CopilotDrawer — Chat interface
-- [ ] MetricsDashboard — Live stats
+- [x] ReceiptCard — Line item list with claim toggles
+- [x] AvatarPill — Colored participant indicator
+- [x] DebtGraph — SVG node-link visualization (raw vs simplified)
+- [x] UPISettleModal — QR code + deep link button
+- [x] CopilotDrawer — Chat interface (backend endpoint remains a 501 stub)
+- [x] MetricsDashboard — Live stats
 
 ### 5.3 Hooks
-- [ ] `useRoomWebSocket` — WebSocket management
-- [ ] `useReceiptSSE` — SSE streaming
-- [ ] `useSandbox` — Demo sandbox initialization
+- [x] `useRoomWebSocket` — WebSocket management
+- [x] `useReceiptSSE` — SSE streaming
+- [x] `useSandbox` — Demo sandbox initialization
 
 ### 5.4 Verification Gate
-- [ ] Browser agent walkthrough: demo → receipt room → finalize → debt graph → settle
+- [x] Browser route smoke: landing, dashboard, metrics, group, and room routes load
+- [x] `pytest -q` — 174 tests pass; Ruff passes on changed backend files
+- [x] Frontend `npm run type-check`, `npm run lint`, and `npm run build`
+- [ ] Full backend-connected walkthrough: demo → receipt room → finalize → debt graph → settle (not run: PostgreSQL and Redis are unavailable in the environment)
 - [ ] **USER APPROVAL REQUIRED** before Stage 6
+
+Stage 5 frontend and API integration code is implemented. Full live-flow verification is still blocked until PostgreSQL and Redis are running; the Copilot chat API is also not implemented and remains an explicit 501 response.
+
+| Date | Stage | Action | Result |
+|------|-------|--------|--------|
+| 2026-11-17 | Stage 5 | Added dashboard, group/room/metrics pages, live API integrations, UPI payment UI, and endpoint tests | ✅ Implemented; backend-connected walkthrough awaits PostgreSQL/Redis |
 
 ---
 

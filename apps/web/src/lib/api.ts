@@ -1,13 +1,21 @@
-/**
- * Typed API client for SplitSmart AI backend.
- * All requests go to /api (proxied to FastAPI via next.config.ts rewrites).
- */
+import type {
+  FinalizeResponse,
+  Group,
+  GroupBalancesResponse,
+  GroupDetail,
+  GuestJoinResponse,
+  HealthResponse,
+  Receipt,
+  ReceiptUploadResponse,
+  SandboxResponse,
+  SimplifiedDebtResult,
+  SystemMetrics,
+  UPIPayment,
+} from "@/lib/types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL
-  ? `${process.env.NEXT_PUBLIC_API_URL}/api/v1`
+  ? `${process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "")}/api/v1`
   : "/api/v1";
-
-// ── Fetch wrapper ─────────────────────────────────────────────────────────
 
 interface RequestOptions {
   method?: string;
@@ -16,27 +24,31 @@ interface RequestOptions {
   signal?: AbortSignal;
 }
 
-async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = "GET", body, token, signal } = options;
-
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
+async function request<T>(
+  path: string,
+  { method = "GET", body, token, signal }: RequestOptions = {},
+): Promise<T> {
+  const headers: Record<string, string> = {};
+  if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (token) headers.Authorization = `Bearer ${token}`;
 
   const response = await fetch(`${API_BASE}${path}`, {
     method,
     headers,
-    body: body ? JSON.stringify(body) : undefined,
+    body: body === undefined ? undefined : JSON.stringify(body),
     signal,
+    cache: "no-store",
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: "Unknown error" }));
-    throw new ApiError(response.status, error.detail ?? "Request failed", error);
+    let detail = `Request failed (${response.status})`;
+    try {
+      const error = (await response.json()) as { detail?: unknown };
+      if (typeof error.detail === "string") detail = error.detail;
+    } catch {
+      // Keep the HTTP status message when the server does not return JSON.
+    }
+    throw new ApiError(response.status, detail);
   }
 
   return response.json() as Promise<T>;
@@ -44,84 +56,132 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 
 export class ApiError extends Error {
   constructor(
-    public status: number,
+    public readonly status: number,
     message: string,
-    public data?: unknown,
   ) {
     super(message);
     this.name = "ApiError";
   }
 }
 
-// ── Health ────────────────────────────────────────────────────────────────
-
-export interface HealthResponse {
-  status: "ok" | "degraded";
-  app: string;
-  version: string;
-  environment: string;
-  timestamp: number;
-  db: string;
-  redis: string;
-  ocr_mode: "mock" | "gemini";
+function roomWebSocketUrl(roomCode: string, token: string): string {
+  const path = `/api/v1/rooms/${encodeURIComponent(roomCode)}/ws`;
+  const base = process.env.NEXT_PUBLIC_API_URL;
+  const url = base
+    ? new URL(path, base)
+    : new URL(path, window.location.origin);
+  url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+  url.searchParams.set("token", token);
+  return url.toString();
 }
 
 export const api = {
   health: {
-    get: () => request<HealthResponse>("/health"),
+    get: (signal?: AbortSignal) => request<HealthResponse>("/health", { signal }),
   },
-
-  // ── Auth ────────────────────────────────────────────────────────────────
-  auth: {
-    register: (data: { email: string; display_name: string; password: string }) =>
-      request("/auth/register", { method: "POST", body: data }),
-    login: (data: { email: string; password: string }) =>
-      request("/auth/login", { method: "POST", body: data }),
-    guest: (data: { display_name: string }) =>
-      request("/auth/guest", { method: "POST", body: data }),
-  },
-
-  // ── Groups ──────────────────────────────────────────────────────────────
   groups: {
-    list: (token: string) => request("/groups", { token }),
-    create: (data: { name: string; currency?: string }, token: string) =>
-      request("/groups", { method: "POST", body: data, token }),
-    get: (id: string, token: string) => request(`/groups/${id}`, { token }),
-    balances: (id: string, token: string) => request(`/groups/${id}/balances`, { token }),
-    simplified: (id: string, token: string) => request(`/groups/${id}/simplified`, { token }),
+    list: (signal?: AbortSignal) => request<Group[]>("/groups", { signal }),
+    create: (data: { name: string; currency?: string }) =>
+      request<Group>("/groups", { method: "POST", body: data }),
+    get: (id: string, signal?: AbortSignal) =>
+      request<GroupDetail>(`/groups/${encodeURIComponent(id)}`, { signal }),
+    balances: (id: string, signal?: AbortSignal) =>
+      request<GroupBalancesResponse>(
+        `/groups/${encodeURIComponent(id)}/balances`,
+        { signal },
+      ),
+    simplified: (id: string, signal?: AbortSignal) =>
+      request<SimplifiedDebtResult>(
+        `/groups/${encodeURIComponent(id)}/simplified`,
+        { signal },
+      ),
   },
-
-  // ── Receipts ─────────────────────────────────────────────────────────────
   receipts: {
-    upload: async (formData: FormData, token: string) => {
+    upload: async (formData: FormData, signal?: AbortSignal) => {
       const response = await fetch(`${API_BASE}/receipts/upload`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
         body: formData,
+        signal,
+        cache: "no-store",
       });
-      if (!response.ok) throw new ApiError(response.status, "Upload failed");
-      return response.json();
+      if (!response.ok) {
+        let detail = `Upload failed (${response.status})`;
+        try {
+          const error = (await response.json()) as { detail?: unknown };
+          if (typeof error.detail === "string") detail = error.detail;
+        } catch {
+          // Retain the HTTP status when the server response is not JSON.
+        }
+        throw new ApiError(response.status, detail);
+      }
+      return response.json() as Promise<ReceiptUploadResponse>;
     },
-    get: (id: string, token: string) => request(`/receipts/${id}`, { token }),
+    get: (id: string, signal?: AbortSignal) =>
+      request<Receipt>(`/receipts/${encodeURIComponent(id)}`, { signal }),
+    forGroup: (groupId: string, signal?: AbortSignal) =>
+      request<Receipt[]>(
+        `/groups/${encodeURIComponent(groupId)}/receipts`,
+        { signal },
+      ),
+    byRoomCode: (roomCode: string, signal?: AbortSignal) =>
+      request<Receipt>(
+        `/receipts/room/${encodeURIComponent(roomCode)}`,
+        { signal },
+      ),
   },
-
-  // ── Rooms ─────────────────────────────────────────────────────────────────
   rooms: {
     guestJoin: (roomCode: string, displayName: string) =>
-      request(`/rooms/${roomCode}/guest-join`, {
-        method: "POST",
-        body: { display_name: displayName },
-      }),
+      request<GuestJoinResponse>(
+        `/rooms/${encodeURIComponent(roomCode)}/guest-join`,
+        { method: "POST", body: { display_name: displayName } },
+      ),
+    webSocketUrl: roomWebSocketUrl,
+    finalize: (
+      roomCode: string,
+      payload: { payer_user_id: string; idempotency_key: string },
+      token: string,
+    ) =>
+      request<FinalizeResponse>(
+        `/rooms/${encodeURIComponent(roomCode)}/finalize`,
+        { method: "POST", body: payload, token },
+      ),
   },
-
-  // ── Sandbox ──────────────────────────────────────────────────────────────
   sandbox: {
-    init: () => request("/sandbox/init", { method: "POST" }),
+    init: () => request<SandboxResponse>("/sandbox/init", { method: "POST" }),
   },
-
-  // ── Metrics ──────────────────────────────────────────────────────────────
   metrics: {
-    get: () => request("/metrics"),
+    get: (signal?: AbortSignal) => request<SystemMetrics>("/metrics", { signal }),
+  },
+  ledger: {
+    upiPayment: (
+      payload: {
+        group_id: string;
+        creditor_user_id: string;
+        amount_paise: number;
+      },
+      signal?: AbortSignal,
+    ) =>
+      request<UPIPayment>("/ledger/upi-intent", {
+        method: "POST",
+        body: payload,
+        signal,
+      }),
+    settle: (
+      payload: {
+        group_id: string;
+        from_user_id: string;
+        to_user_id: string;
+        amount_paise: number;
+        idempotency_key: string;
+      },
+    ) => request("/ledger/settle", { method: "POST", body: payload }),
+  },
+  copilot: {
+    chat: (message: string, groupId: string) =>
+      request<{ reply: string }>("/copilot/chat", {
+        method: "POST",
+        body: { message, group_id: groupId },
+      }),
   },
 };
 

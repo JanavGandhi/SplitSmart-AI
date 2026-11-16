@@ -21,14 +21,16 @@ from sqlalchemy.orm import selectinload
 from app.database import get_db
 from app.models.group import Group
 from app.models.group_member import GroupMember
+from app.models.item_claim import ItemClaim
 from app.models.ledger_entry import LedgerEntry
-from app.models.user import User
-from app.schemas.group import GroupCreate, GroupResponse, GroupDetailResponse, MemberResponse
+from app.models.receipt import Receipt
+from app.models.receipt_line_item import ReceiptLineItem
+from app.schemas.group import GroupCreate, GroupDetailResponse, GroupResponse, MemberResponse
+from app.schemas.receipt import ReceiptResponse
 from app.schemas.user import UserPublic
 from app.services.debt_simplifier import (
-    BalanceEntry,
-    simplify_debts,
     compute_net_balances,
+    simplify_debts,
 )
 
 router = APIRouter(prefix="/groups", tags=["groups"])
@@ -212,6 +214,29 @@ async def get_balances(
         ],
         "total_entries": len(entries),
     }
+
+
+@router.get("/{group_id}/receipts", response_model=list[ReceiptResponse])
+async def list_group_receipts(
+    group_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+):
+    """List a group's receipts with their items and claims for the group UI."""
+    group_result = await db.execute(select(Group.id).where(Group.id == group_id))
+    if group_result.scalar_one_or_none() is None:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    result = await db.execute(
+        select(Receipt)
+        .options(
+            selectinload(Receipt.line_items)
+            .selectinload(ReceiptLineItem.claims)
+            .selectinload(ItemClaim.user)
+        )
+        .where(Receipt.group_id == group_id)
+        .order_by(Receipt.created_at.desc())
+    )
+    return [ReceiptResponse.model_validate(receipt) for receipt in result.scalars().all()]
 
 
 @router.get("/{group_id}/simplified")

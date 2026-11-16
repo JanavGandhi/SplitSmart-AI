@@ -1,6 +1,6 @@
 # SplitSmart AI — Complete Architecture Specification
 
-> **Version:** 1.0 | **Last Updated:** 2026-11-16 | **Status:** Stage 4 complete (Stage 5 awaits user approval)
+> **Version:** 1.0 | **Last Updated:** 2026-11-17 | **Status:** Stage 5 implemented; live backend walkthrough awaits PostgreSQL/Redis
 
 ---
 
@@ -275,6 +275,14 @@ Returns: `uri: str` + `qr_base64: str` (base64 SVG QR)
 | `RECEIPT_LOCKED` | Server to All | `{receipt_id, final_splits}` |
 | `SIMULATE_FRIENDS` | Client to Server | `{}` |
 
+## 6.1 Stage 5 Web/API Integrations
+
+- `GET /api/v1/groups/{group_id}/receipts` returns receipt and claim data for the group view.
+- `POST /api/v1/ledger/upi-intent` returns a UPI deep link and SVG QR payload. A recorded settlement is not proof of bank transfer.
+- `GET /api/v1/metrics` returns counts queried from the database.
+- The Copilot drawer is present in the UI, but `/api/v1/copilot/chat` remains a 501 stub.
+- Stage 5 routes: `/dashboard`, `/groups/{id}`, `/room/{code}`, and `/metrics`.
+
 ---
 
 ## 7. Environment Variables
@@ -310,5 +318,5 @@ CORS_ORIGINS=http://localhost:3000
 | Stage 2: Math Engine + Sandbox | Completed | - |
 | Stage 3: Vision AI + SSE | Completed | - |
 | Stage 4: WebSocket Claim Room | Completed | Guest JWT, Redis Pub/Sub claims, and idempotent finalization |
-| Stage 5: Next.js Frontend | Pending | Awaiting user approval |
+| Stage 5: Next.js Frontend | Implemented | UI/API code and route smoke checks complete; live walkthrough needs PostgreSQL/Redis. Copilot chat remains a stub. |
 | Stage 6: CI/CD + Production | Pending | - |
