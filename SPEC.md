@@ -1,6 +1,6 @@
 # SplitSmart AI — Complete Architecture Specification
 
-> **Version:** 1.0 | **Last Updated:** 2026-10-17 | **Status:** In Progress (Stage 1)
+> **Version:** 1.0 | **Last Updated:** 2026-11-16 | **Status:** Stage 4 complete (Stage 5 awaits user approval)
 
 ---
 
@@ -306,9 +306,9 @@ CORS_ORIGINS=http://localhost:3000
 
 | Stage | Status | Notes |
 |-------|--------|-------|
-| Stage 1: Scaffold + DB + Docker | In Progress | Current stage |
-| Stage 2: Math Engine + Sandbox | Pending | - |
-| Stage 3: Vision AI + SSE | Pending | - |
-| Stage 4: WebSocket Claim Room | Pending | - |
-| Stage 5: Next.js Frontend | Pending | - |
+| Stage 1: Scaffold + DB + Docker | Completed | - |
+| Stage 2: Math Engine + Sandbox | Completed | - |
+| Stage 3: Vision AI + SSE | Completed | - |
+| Stage 4: WebSocket Claim Room | Completed | Guest JWT, Redis Pub/Sub claims, and idempotent finalization |
+| Stage 5: Next.js Frontend | Pending | Awaiting user approval |
 | Stage 6: CI/CD + Production | Pending | - |

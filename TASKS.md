@@ -126,26 +126,32 @@
 ---
 
 ## STAGE 4: Multiplayer No-Login WebSocket Claim Room
-**Status:** ⬜ Pending
+**Status:** 🟢 Completed (Awaiting user approval for Stage 5)
 
 ### 4.1 Guest Auth
-- [ ] `POST /api/v1/rooms/{code}/guest-join` — Issue scoped guest JWT
+- [x] `POST /api/v1/rooms/{code}/guest-join` — Create guest membership and issue room-scoped JWT
 
 ### 4.2 WebSocket Endpoint
-- [ ] `WS /api/v1/rooms/{code}/ws` — Redis Pub/Sub backed
-- [ ] Events: PARTICIPANT_JOINED, ITEM_CLAIM_TOGGLED, TAX_RECALCULATED, RECEIPT_LOCKED
-- [ ] SIMULATE_FRIENDS action — 3 virtual roommates over 6 seconds
+- [x] `WS /api/v1/rooms/{code}/ws` — Redis Pub/Sub backed
+- [x] Events: PARTICIPANT_JOINED, ITEM_CLAIM_TOGGLED, TAX_RECALCULATED, RECEIPT_LOCKED
+- [x] SIMULATE_FRIENDS action — 3 virtual roommates over 6 seconds
 
 ### 4.3 Finalize & Lock
-- [ ] Finalize split → write ledger_entries in ACID transaction with idempotency key
+- [x] Finalize split → write ledger_entries in ACID transaction with idempotency key
+- [x] Persist finalization idempotency key with Alembic migration
 
 ### 4.4 Tests
-- [ ] Concurrent WebSocket connection test
-- [ ] Item toggle test with math recalculation
+- [x] Concurrent WebSocket connection test
+- [x] Item toggle test with math recalculation
+- [x] Finalization, retry idempotency, and guest authorization tests
 
 ### 4.5 Verification Gate
-- [ ] pytest WebSocket tests pass
+- [x] `pytest tests/test_rooms.py -v` passes
 - [ ] **USER APPROVAL REQUIRED** before Stage 5
+
+| Date | Stage | Action | Result |
+|------|-------|--------|--------|
+| 2026-11-16 | Stage 4 | Implemented scoped guest rooms, Redis WebSockets, claim recalculation, simulation, and atomic finalization | ✅ Tests passing |
 
 ---
 

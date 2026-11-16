@@ -9,7 +9,7 @@
 [![Redis](https://img.shields.io/badge/Cache%20%26%20Broker-Redis_7-DC382D.svg?logo=redis&logoColor=white)](https://redis.io)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-132%20Passed-success.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-170%20Passed-success.svg)]()
 
 ---
 
@@ -232,7 +232,7 @@ pytest tests/test_math_engine.py tests/test_debt_simplifier.py -v
 ### Verified Test Highlights:
 - **100 Randomized Permutation Tests:** Generates 100 receipts with random totals, multiple claimants, arbitrary GST, delivery fees, and discounts. Verifies that the sum of claimant portions matches the receipt total with **0 paise deviation**.
 - **Min-Cash-Flow Invariant Tests:** Verifies circular debt elimination (e.g. $A \to B \to C \to A$), complex multi-debtor graph convergence, and balance preservation across all participants.
-- **132 Tests Passing in < 0.5s.**
+- **170 Tests Passing.**
 
 ---
 
@@ -242,10 +242,18 @@ pytest tests/test_math_engine.py tests/test_debt_simplifier.py -v
 |---|---|:---:|---|
 | **Stage 1** | Monorepo Scaffolding, Docker & Database Layer | 🟢 Completed | PostgreSQL 16 (pgvector), Redis 7, SQLAlchemy 2 Async, Alembic migrations, Next.js 15 scaffold. |
 | **Stage 2** | Core Math Engine, Debt Simplifier & Sandbox | 🟢 Completed | Largest Remainder Method, Min-Cash-Flow algorithm, UPI QR codes, 1-Click Goa Squad sandbox seeder. |
-| **Stage 3** | Async Vision AI Receipt Pipeline & SSE | 🟡 Up Next | Gemini 2.5 Flash OCR, Celery asynchronous processing queue, live Server-Sent Events progress tracking. |
-| **Stage 4** | Multiplayer No-Login WebSocket Claim Room | ⬜ Planned | Ephemeral guest JWTs, real-time item claiming via Redis Pub/Sub, virtual roommate simulator. |
+| **Stage 3** | Async Vision AI Receipt Pipeline & SSE | 🟢 Completed | Gemini 2.5 Flash OCR, Celery asynchronous processing queue, live Server-Sent Events progress tracking. |
+| **Stage 4** | Multiplayer No-Login WebSocket Claim Room | 🟢 Completed | Room-scoped guest JWTs, Redis Pub/Sub claims, paise recalculation, roommate simulator, and idempotent ledger finalization. |
 | **Stage 5** | Production Next.js UI & Interactive Graphs | ⬜ Planned | Interactive D3/SVG debt graph, live claim room UI, dark mode fintech dashboard. |
 | **Stage 6** | Public Telemetry & Production Hardening | ⬜ Planned | Prometheus metrics, audit logging, rate limiting, and deployment workflows. |
+
+### Stage 4 room API
+
+- `POST /api/v1/rooms/{room_code}/guest-join` creates a guest membership and returns a room-scoped JWT.
+- Connect to `WS /api/v1/rooms/{room_code}/ws?token={access_token}` for participant and claim events.
+- Send `{"event":"ITEM_CLAIM_TOGGLED","item_id":"<line-item-uuid>"}` to toggle an item claim, or `{"event":"SIMULATE_FRIENDS"}` to add three demo participants.
+- `POST /api/v1/rooms/{room_code}/finalize` requires the guest JWT as a Bearer token and JSON containing `payer_user_id` and `idempotency_key`. All line items must be claimed before finalization.
+- Apply the finalization idempotency column with `alembic upgrade head` from `apps/api`.
 
 ---
 

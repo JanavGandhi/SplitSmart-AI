@@ -20,15 +20,6 @@ async def create_guest():
     return {"detail": "Not implemented yet — coming in Stage 4"}
 
 
-# ── Rooms ─────────────────────────────────────────────────────────────────────
-rooms_router = APIRouter(prefix="/rooms", tags=["rooms"])
-
-
-@rooms_router.post("/{room_code}/guest-join", status_code=501)
-async def guest_join(room_code: str):
-    return {"detail": "Not implemented yet — coming in Stage 4"}
-
-
 # ── Copilot ───────────────────────────────────────────────────────────────────
 copilot_router = APIRouter(prefix="/copilot", tags=["copilot"])
 

@@ -23,9 +23,9 @@ from app.api.v1.groups import router as groups_router
 from app.api.v1.sandbox import router as sandbox_router
 from app.api.v1.ledger import router as ledger_router
 from app.api.v1.receipts import router as receipts_router
+from app.api.v1.rooms import router as rooms_router
 from app.api.v1.stubs import (
     auth_router,
-    rooms_router,
     copilot_router,
     metrics_router,
 )
