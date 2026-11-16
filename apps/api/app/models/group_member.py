@@ -1,12 +1,17 @@
 """GroupMember ORM model — join table with unique constraint."""
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, UniqueConstraint, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.models.group import Group
+    from app.models.user import User
 
 
 class GroupMember(Base):
@@ -29,10 +34,10 @@ class GroupMember(Base):
     )
 
     # Relationships
-    group: Mapped["Group"] = relationship(  # type: ignore[name-defined]
+    group: Mapped["Group"] = relationship(
         "Group", back_populates="members"
     )
-    user: Mapped["User"] = relationship(  # type: ignore[name-defined]
+    user: Mapped["User"] = relationship(
         "User", back_populates="group_memberships"
     )
 

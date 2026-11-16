@@ -1,12 +1,18 @@
 """User ORM model."""
 import uuid
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean, DateTime, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.models.group_member import GroupMember
+    from app.models.item_claim import ItemClaim
+    from app.models.receipt import Receipt
 
 
 class User(Base):
@@ -26,16 +32,16 @@ class User(Base):
     )
 
     # Relationships
-    group_memberships: Mapped[list["GroupMember"]] = relationship(  # type: ignore[name-defined]
+    group_memberships: Mapped[list["GroupMember"]] = relationship(
         "GroupMember", back_populates="user", lazy="select"
     )
-    uploaded_receipts: Mapped[list["Receipt"]] = relationship(  # type: ignore[name-defined]
+    uploaded_receipts: Mapped[list["Receipt"]] = relationship(
         "Receipt", foreign_keys="Receipt.uploaded_by", back_populates="uploader", lazy="select"
     )
-    paid_receipts: Mapped[list["Receipt"]] = relationship(  # type: ignore[name-defined]
+    paid_receipts: Mapped[list["Receipt"]] = relationship(
         "Receipt", foreign_keys="Receipt.paid_by", back_populates="payer", lazy="select"
     )
-    item_claims: Mapped[list["ItemClaim"]] = relationship(  # type: ignore[name-defined]
+    item_claims: Mapped[list["ItemClaim"]] = relationship(
         "ItemClaim", back_populates="user", lazy="select"
     )
 

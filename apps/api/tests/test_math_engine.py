@@ -17,7 +17,6 @@ from app.services.math_engine import (
     ClaimInput,
     LineItemInput,
     ReceiptInput,
-    SplitResult,
     compute_equal_split,
     compute_split,
 )

@@ -33,9 +33,97 @@ services:
       retries: 10
       start_period: 5s
 
+  api:
+    build:
+      context: ./apps/api
+    container_name: splitsmart_api
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+asyncpg://splitsmart:splitsmart@postgres:5432/splitsmart
+      SYNC_DATABASE_URL: postgresql://splitsmart:splitsmart@postgres:5432/splitsmart
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-development-only-change-before-deploy}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
+      MAX_UPLOAD_SIZE_MB: 10
+      UPLOAD_DIR: /app/uploads
+      RATE_LIMIT_AI_PER_MINUTE: 10
+      RATE_LIMIT_UPLOAD_PER_HOUR: 20
+    command: ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - api_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/')"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ./apps/api
+    container_name: splitsmart_worker
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+asyncpg://splitsmart:splitsmart@postgres:5432/splitsmart
+      SYNC_DATABASE_URL: postgresql://splitsmart:splitsmart@postgres:5432/splitsmart
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-development-only-change-before-deploy}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      MAX_UPLOAD_SIZE_MB: 10
+      UPLOAD_DIR: /app/uploads
+    command: ["celery", "-A", "app.worker.celery_app", "worker", "--loglevel=info"]
+    volumes:
+      - api_uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./apps/web
+      args:
+        API_INTERNAL_URL: http://api:8000
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    container_name: splitsmart_web
+    environment:
+      NODE_ENV: production
+      API_INTERNAL_URL: http://api:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   redis_data:
+  api_uploads:
 
 networks:
   default:

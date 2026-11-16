@@ -139,8 +139,8 @@ def _split_item_among_claimants(
 
     # Use common denominator to get exact integer weights
     # For claims with different denominators, compute LCM and convert
-    from math import gcd
     from functools import reduce
+    from math import gcd
 
     def lcm(a: int, b: int) -> int:
         return a * b // gcd(a, b)
@@ -204,7 +204,7 @@ def compute_split(receipt: ReceiptInput) -> SplitResult:
 
     user_extras: dict[uuid.UUID, int] = {}
     if net_extras != 0 and computed_subtotal > 0:
-        shares = [(uid, amt) for uid, amt in user_item_totals.items()]
+        shares = list(user_item_totals.items())
         user_extras = _distribute_integer(net_extras, shares, computed_subtotal)
     elif net_extras != 0 and computed_subtotal == 0:
         # Edge case: extras exist but no item subtotals — distribute equally

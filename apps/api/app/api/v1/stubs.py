@@ -28,15 +28,6 @@ async def create_guest():
     return {"detail": "Not implemented yet — coming in Stage 4"}
 
 
-# ── Copilot ───────────────────────────────────────────────────────────────────
-copilot_router = APIRouter(prefix="/copilot", tags=["copilot"])
-
-
-@copilot_router.post("/chat", status_code=501)
-async def chat():
-    return {"detail": "Not implemented yet — coming in Stage 5"}
-
-
 # ── Metrics ───────────────────────────────────────────────────────────────────
 metrics_router = APIRouter(prefix="/metrics", tags=["metrics"])
 

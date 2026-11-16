@@ -1,11 +1,16 @@
 """ItemClaim ORM model — user's claim on a receipt line item with share fractions."""
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import BigInteger, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.models.receipt_line_item import ReceiptLineItem
+    from app.models.user import User
 
 
 class ItemClaim(Base):
@@ -40,10 +45,10 @@ class ItemClaim(Base):
     calculated_final_paise: Mapped[int] = mapped_column(BigInteger, nullable=False, default=0)
 
     # Relationships
-    line_item: Mapped["ReceiptLineItem"] = relationship(  # type: ignore[name-defined]
+    line_item: Mapped["ReceiptLineItem"] = relationship(
         "ReceiptLineItem", back_populates="claims"
     )
-    user: Mapped["User"] = relationship(  # type: ignore[name-defined]
+    user: Mapped["User"] = relationship(
         "User", back_populates="item_claims"
     )
 

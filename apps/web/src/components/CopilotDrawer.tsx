@@ -37,7 +37,7 @@ export default function CopilotDrawer({ groupId }: { groupId: string }) {
           role: "assistant",
           text:
             reason instanceof Error
-              ? `Copilot is not available yet: ${reason.message}`
+              ? `Copilot could not respond: ${reason.message}`
               : "Copilot could not respond. Please try again later.",
         },
       ]);
@@ -93,7 +93,9 @@ export default function CopilotDrawer({ groupId }: { groupId: string }) {
                 />
                 <button type="submit" disabled={!message.trim() || sending} aria-label="Send message" className="rounded-lg bg-indigo-500 p-2 text-white disabled:opacity-40"><Send size={15} /></button>
               </div>
-              <p className="mt-2 text-[10px] text-slate-600">AI chat availability depends on the configured Copilot service.</p>
+              <p className="mt-2 text-[10px] leading-relaxed text-slate-500">
+                Your question and this group’s names, balances, and recent receipt totals are sent to the configured Google Gemini service.
+              </p>
             </form>
           </aside>
         </div>

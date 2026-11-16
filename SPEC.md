@@ -1,6 +1,6 @@
 # SplitSmart AI — Complete Architecture Specification
 
-> **Version:** 1.0 | **Last Updated:** 2026-11-17 | **Status:** Stage 5 implemented; live backend walkthrough awaits PostgreSQL/Redis
+> **Version:** 1.0 | **Last Updated:** 2026-11-16 | **Status:** Stage 6 implementation complete; live Docker walkthrough pending
 
 ---
 
@@ -12,7 +12,7 @@ SplitSmart AI is a production-grade, scalable, real-time multiplayer receipt-spl
 
 | # | Feature | Technology |
 |---|---------|------------|
-| 1 | **Zero-Typing Vision AI Receipt Parser** | Gemini 2.5 Flash + Celery async workers + SSE streaming |
+| 1 | **Zero-Typing Vision AI Receipt Parser** | Gemini 2.0 Flash + Celery async workers + SSE streaming |
 | 2 | **No-Login Multiplayer Claim Room** | WebSockets + Redis Pub/Sub + scoped guest JWT |
 | 3 | **Exact Paise/Cent Ledger + Min-Cash-Flow Debt Graph** | Integer arithmetic + graph theory O(N log N) |
 | 4 | **1-Click Recruiter Guest Sandbox + Public Telemetry** | Pre-seeded demo data + /metrics observability |
@@ -28,7 +28,7 @@ SplitSmart AI is a production-grade, scalable, real-time multiplayer receipt-spl
 - **Migrations:** Alembic
 - **Validation:** Pydantic v2
 - **Task Queue:** Celery + Redis broker
-- **AI:** Google Gemini API (gemini-2.5-flash)
+- **AI:** Google Gemini API (gemini-2.0-flash)
 - **Testing:** pytest + pytest-asyncio
 
 ### Frontend
@@ -275,13 +275,22 @@ Returns: `uri: str` + `qr_base64: str` (base64 SVG QR)
 | `RECEIPT_LOCKED` | Server to All | `{receipt_id, final_splits}` |
 | `SIMULATE_FRIENDS` | Client to Server | `{}` |
 
-## 6.1 Stage 5 Web/API Integrations
+### Stage 5 Web/API Integrations
 
 - `GET /api/v1/groups/{group_id}/receipts` returns receipt and claim data for the group view.
 - `POST /api/v1/ledger/upi-intent` returns a UPI deep link and SVG QR payload. A recorded settlement is not proof of bank transfer.
 - `GET /api/v1/metrics` returns counts queried from the database.
-- The Copilot drawer is present in the UI, but `/api/v1/copilot/chat` remains a 501 stub.
+- `POST /api/v1/copilot/chat` uses Gemini with a minimal group summary when `GEMINI_API_KEY` is configured; without it, the route returns 503.
+- The Copilot drawer discloses that the user's question and the group's names, balances, and recent receipt totals are sent to Google Gemini.
 - Stage 5 routes: `/dashboard`, `/groups/{id}`, `/room/{code}`, and `/metrics`.
+
+### Stage 6 Rate Limits and Delivery
+
+- Copilot: 10 requests/minute per client IP using an atomic Redis sliding window.
+- Receipt uploads: 20 requests/hour per client IP using an atomic Redis sliding window.
+- Requests fail closed with 503 if Redis is unavailable; excess requests return 429 with `Retry-After`.
+- `docker compose up --build` starts the database, Redis, API, worker, and web application and applies migrations.
+- GitHub Actions runs the full backend test suite and Ruff, plus frontend type-check, lint, and build.
 
 ---
 
@@ -306,6 +315,10 @@ GEMINI_API_KEY=your-google-ai-studio-key-here
 # App
 APP_ENV=development
 CORS_ORIGINS=http://localhost:3000
+
+# Rate limiting
+RATE_LIMIT_AI_PER_MINUTE=10
+RATE_LIMIT_UPLOAD_PER_HOUR=20
 ```
 
 ---
@@ -318,5 +331,5 @@ CORS_ORIGINS=http://localhost:3000
 | Stage 2: Math Engine + Sandbox | Completed | - |
 | Stage 3: Vision AI + SSE | Completed | - |
 | Stage 4: WebSocket Claim Room | Completed | Guest JWT, Redis Pub/Sub claims, and idempotent finalization |
-| Stage 5: Next.js Frontend | Implemented | UI/API code and route smoke checks complete; live walkthrough needs PostgreSQL/Redis. Copilot chat remains a stub. |
-| Stage 6: CI/CD + Production | Pending | - |
+| Stage 5: Next.js Frontend | Implemented | UI/API code complete; full live walkthrough needs the Docker Compose stack and a Gemini key for Copilot. |
+| Stage 6: CI/CD + Production | Implemented | Redis sliding-window limits, GitHub Actions checks, and one-command Compose stack; live Docker walkthrough remains unverified here. |

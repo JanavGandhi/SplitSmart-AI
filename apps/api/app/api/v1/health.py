@@ -5,8 +5,8 @@ import redis.asyncio as aioredis
 from fastapi import APIRouter
 from sqlalchemy import text
 
-from app.database import engine
 from app.config import get_settings
+from app.database import engine
 
 router = APIRouter(tags=["health"])
 

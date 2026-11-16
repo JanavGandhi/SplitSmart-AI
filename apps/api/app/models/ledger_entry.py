@@ -1,7 +1,8 @@
 """LedgerEntry ORM model — ACID double-entry style expense tracking."""
-import enum
 import uuid
 from datetime import datetime
+from enum import StrEnum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import BigInteger, CheckConstraint, DateTime, Enum, ForeignKey, String, func
 from sqlalchemy.dialects.postgresql import UUID
@@ -9,8 +10,13 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
+if TYPE_CHECKING:
+    from app.models.group import Group
+    from app.models.receipt import Receipt
+    from app.models.user import User
 
-class EntryType(str, enum.Enum):
+
+class EntryType(StrEnum):
     EXPENSE_SHARE = "EXPENSE_SHARE"
     SETTLEMENT = "SETTLEMENT"
 
@@ -55,16 +61,16 @@ class LedgerEntry(Base):
     )
 
     # Relationships
-    group: Mapped["Group"] = relationship(  # type: ignore[name-defined]
+    group: Mapped["Group"] = relationship(
         "Group", back_populates="ledger_entries"
     )
-    receipt: Mapped["Receipt | None"] = relationship(  # type: ignore[name-defined]
+    receipt: Mapped["Receipt | None"] = relationship(
         "Receipt", back_populates="ledger_entries"
     )
-    debtor: Mapped["User"] = relationship(  # type: ignore[name-defined]
+    debtor: Mapped["User"] = relationship(
         "User", foreign_keys=[from_user_id]
     )
-    creditor: Mapped["User"] = relationship(  # type: ignore[name-defined]
+    creditor: Mapped["User"] = relationship(
         "User", foreign_keys=[to_user_id]
     )
 

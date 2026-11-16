@@ -14,9 +14,8 @@ Redis channel pattern: "receipt:{receipt_id}:events"
 from __future__ import annotations
 
 import json
-import logging
 import uuid
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -77,7 +76,7 @@ def _publish_event(
     payload = json.dumps({
         "event": event_type,
         "receipt_id": receipt_id,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **data,
     })
     redis_client.publish(channel, payload)

@@ -2,7 +2,6 @@
 Stage 1 Health Check Test — verifies app module imports correctly.
 Full test suite begins in Stage 2.
 """
-import pytest
 
 
 def test_app_config_loads():
@@ -37,8 +36,15 @@ def test_database_base_exists():
 def test_all_models_importable():
     """All 7 ORM models must import without errors."""
     from app.models import (
-        User, Group, GroupMember, Receipt, ReceiptStatus,
-        ReceiptLineItem, ItemClaim, LedgerEntry, EntryType
+        EntryType,
+        Group,
+        GroupMember,
+        ItemClaim,
+        LedgerEntry,
+        Receipt,
+        ReceiptLineItem,
+        ReceiptStatus,
+        User,
     )
     assert User.__tablename__ == "users"
     assert Group.__tablename__ == "groups"
@@ -54,9 +60,9 @@ def test_all_models_importable():
 def test_all_schemas_importable():
     """All Pydantic schemas must import without errors."""
     from app.schemas import (
-        UserCreate, GuestUserCreate, UserResponse,
-        GroupCreate, GroupResponse,
-        ReceiptResponse, ReceiptUploadResponse,
+        GroupCreate,
+        GuestUserCreate,
+        UserCreate,
     )
     assert UserCreate is not None
     assert GuestUserCreate is not None

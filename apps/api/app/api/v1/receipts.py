@@ -37,6 +37,7 @@ from app.models.item_claim import ItemClaim
 from app.models.receipt import Receipt, ReceiptStatus
 from app.models.receipt_line_item import ReceiptLineItem
 from app.schemas.receipt import ReceiptResponse, ReceiptUploadResponse
+from app.services.rate_limiter import enforce_upload_rate_limit
 
 logger = structlog.get_logger(__name__)
 router = APIRouter(prefix="/receipts", tags=["receipts"])
@@ -63,7 +64,11 @@ def _validate_image(file: UploadFile) -> None:
 
 # ── POST /receipts/upload ──────────────────────────────────────────────────────
 
-@router.post("/upload", status_code=status.HTTP_202_ACCEPTED, response_model=ReceiptUploadResponse)
+@router.post(
+    "/upload",
+    status_code=status.HTTP_202_ACCEPTED,
+    response_model=ReceiptUploadResponse,
+)
 async def upload_receipt(
     request: Request,
     file: UploadFile = File(..., description="Receipt image (JPEG, PNG, WebP, HEIC)"),
@@ -100,6 +105,8 @@ async def upload_receipt(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="paid_by must be a valid UUID",
             )
+
+    await enforce_upload_rate_limit(request)
 
     # ── 1. Save file to disk ───────────────────────────────────────────────────
     upload_dir = _get_upload_dir(settings)

@@ -6,7 +6,7 @@
 ---
 
 ## STAGE 1: Workspace Spec, Monorepo Scaffolding, Docker & Database Layer
-**Status:** 🟡 In Progress
+**Status:** 🟢 Completed
 
 ### 1.1 Root Tracking Files
 - [x] Create `SPEC.md` with full architecture, schema, algorithms, API contracts
@@ -62,12 +62,12 @@
 - [x] `alembic upgrade head` → all 7 tables created
 - [x] `GET /api/v1/health` → 200 `{"status":"ok","db":"connected","redis":"connected"}`
 - [x] Browser agent screenshot of health endpoint + landing page
-- [ ] **USER APPROVAL REQUIRED** before Stage 2
+- [x] User approved proceeding to Stage 2
 
 ---
 
 ## STAGE 2: Core Math Engine, Debt Graph Algorithm & 1-Click Recruiter Sandbox
-**Status:** 🟢 Completed (Awaiting user review for Stage 3)
+**Status:** 🟢 Completed
 
 ### 2.1 Core Services
 - [x] `services/math_engine.py` — Proportional tax/discount distribution with paise invariant
@@ -93,12 +93,12 @@
 ### 2.5 Verification Gate
 - [x] `pytest tests/test_math_engine.py tests/test_debt_simplifier.py -v` → all 132 tests pass
 - [x] Sandbox endpoint configured with Goa demo dataset
-- [ ] **USER APPROVAL REQUIRED** before Stage 3
+- [x] User approved proceeding to Stage 3
 
 ---
 
 ## STAGE 3: Async Vision AI Receipt Pipeline & Real-Time SSE Progress
-**Status:** 🟢 Completed (Awaiting user review for Stage 4)
+**Status:** 🟢 Completed
 
 ### 3.1 Celery Worker
 - [x] `worker/celery_app.py` — Celery app with Redis broker
@@ -122,11 +122,12 @@
 ### 3.5 Verification Gate
 - [x] `pytest tests/test_receipt_pipeline.py -v` → all 23 pass
 - [x] Full suite: 162 tests passing
+- [x] User approved proceeding to Stage 4
 
 ---
 
 ## STAGE 4: Multiplayer No-Login WebSocket Claim Room
-**Status:** 🟢 Completed (Awaiting user approval for Stage 5)
+**Status:** 🟢 Completed
 
 ### 4.1 Guest Auth
 - [x] `POST /api/v1/rooms/{code}/guest-join` — Create guest membership and issue room-scoped JWT
@@ -147,7 +148,7 @@
 
 ### 4.5 Verification Gate
 - [x] `pytest tests/test_rooms.py -v` passes
-- [ ] **USER APPROVAL REQUIRED** before Stage 5
+- [x] User approved proceeding to Stage 5
 
 | Date | Stage | Action | Result |
 |------|-------|--------|--------|
@@ -156,7 +157,7 @@
 ---
 
 ## STAGE 5: Next.js Frontend — All Pages + Interactive Visualizations
-**Status:** 🟡 Implemented; live end-to-end walkthrough awaits PostgreSQL/Redis runtime
+**Status:** 🟡 Implemented; live end-to-end walkthrough awaits Docker runtime
 
 ### 5.1 Pages
 - [x] Landing page — Dark fintech hero, "Launch Instant Demo" button
@@ -170,7 +171,7 @@
 - [x] AvatarPill — Colored participant indicator
 - [x] DebtGraph — SVG node-link visualization (raw vs simplified)
 - [x] UPISettleModal — QR code + deep link button
-- [x] CopilotDrawer — Chat interface (backend endpoint remains a 501 stub)
+- [x] CopilotDrawer — Chat interface with configured Gemini backend
 - [x] MetricsDashboard — Live stats
 
 ### 5.3 Hooks
@@ -180,34 +181,37 @@
 
 ### 5.4 Verification Gate
 - [x] Browser route smoke: landing, dashboard, metrics, group, and room routes load
-- [x] `pytest -q` — 174 tests pass; Ruff passes on changed backend files
+- [x] `pytest -q` — 183 tests pass; `ruff check app tests` passes
 - [x] Frontend `npm run type-check`, `npm run lint`, and `npm run build`
-- [ ] Full backend-connected walkthrough: demo → receipt room → finalize → debt graph → settle (not run: PostgreSQL and Redis are unavailable in the environment)
-- [ ] **USER APPROVAL REQUIRED** before Stage 6
+- [ ] Full backend-connected walkthrough: demo → receipt room → finalize → debt graph → settle (not run: Docker is unavailable in the environment)
+- [x] User approved proceeding to Stage 6
 
-Stage 5 frontend and API integration code is implemented. Full live-flow verification is still blocked until PostgreSQL and Redis are running; the Copilot chat API is also not implemented and remains an explicit 501 response.
+Stage 5 pages and API integrations are implemented. The backend-connected walkthrough requires the Docker Compose stack; Copilot additionally requires `GEMINI_API_KEY`.
 
 | Date | Stage | Action | Result |
 |------|-------|--------|--------|
-| 2026-11-17 | Stage 5 | Added dashboard, group/room/metrics pages, live API integrations, UPI payment UI, and endpoint tests | ✅ Implemented; backend-connected walkthrough awaits PostgreSQL/Redis |
+| 2026-11-16 | Stage 5 | Added dashboard, group/room/metrics pages, live API integrations, UPI payment UI, and endpoint tests | ✅ Implemented; live walkthrough needs the Compose services |
 
 ---
 
 ## STAGE 6: Rate Limiting, CI/CD & Production Readiness
-**Status:** ⬜ Pending
+**Status:** 🟡 Implemented; live Docker verification unavailable in this environment
 
 ### 6.1 Rate Limiting
-- [ ] Redis sliding window middleware (AI endpoints: 10 req/min per IP)
+- [x] Redis atomic sliding window limit for Copilot: 10 requests/minute per client IP
+- [x] Redis atomic sliding window limit for receipt uploads: 20 requests/hour per client IP
 
 ### 6.2 CI/CD
-- [ ] `.github/workflows/ci.yml` — pytest + ruff + next build
+- [x] `.github/workflows/ci.yml` — backend tests/lint and frontend type-check/lint/build
 
 ### 6.3 Documentation
-- [ ] `README.md` — Portfolio-grade with Mermaid architecture diagram, 1-command setup
+- [x] `README.md` — Mermaid architecture diagram, one-command Docker Compose setup, API and privacy notes
 
 ### 6.4 Verification Gate
-- [ ] Full test suite passes
-- [ ] Next.js production build succeeds
+- [x] Full backend test suite passes
+- [x] `ruff check app tests` passes
+- [x] Next.js type-check, lint, and production build pass
+- [ ] Run `docker compose up --build` and complete the live browser walkthrough (Docker is unavailable in this environment)
 - [ ] README reviewed and approved
 
 ---
@@ -218,3 +222,4 @@ Stage 5 frontend and API integration code is implemented. Full live-flow verific
 |------|-------|--------|--------|
 | 2026-10-17 | Stage 1 | Created SPEC.md + TASKS.md | ✅ Done |
 | 2026-10-17 | Stage 1 | Created docker-compose.yml | In progress |
+| 2026-11-16 | Stage 6 | Added Gemini Copilot API, Redis rate limits, CI workflow, and full-stack Compose setup | ✅ Tests/builds pass; live Docker walkthrough remains pending |

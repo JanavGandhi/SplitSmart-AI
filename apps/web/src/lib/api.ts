@@ -67,9 +67,15 @@ export class ApiError extends Error {
 function roomWebSocketUrl(roomCode: string, token: string): string {
   const path = `/api/v1/rooms/${encodeURIComponent(roomCode)}/ws`;
   const base = process.env.NEXT_PUBLIC_API_URL;
+  const isLocalHost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
   const url = base
     ? new URL(path, base)
-    : new URL(path, window.location.origin);
+    : new URL(
+        path,
+        isLocalHost
+          ? `${window.location.protocol}//${window.location.hostname}:8000`
+          : window.location.origin,
+      );
   url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
   url.searchParams.set("token", token);
   return url.toString();

@@ -2,8 +2,6 @@
 from datetime import date, datetime
 from uuid import UUID
 
-from pydantic import Field
-
 from app.models.receipt import ReceiptStatus
 from app.schemas.common import BaseSchema
 from app.schemas.user import UserPublic

@@ -1,7 +1,8 @@
 """Receipt ORM model — core entity with paise-based monetary columns and pgvector embedding."""
-import enum
 import uuid
 from datetime import date, datetime
+from enum import StrEnum
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     BigInteger,
@@ -19,16 +20,21 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
+if TYPE_CHECKING:
+    from app.models.group import Group
+    from app.models.ledger_entry import LedgerEntry
+    from app.models.receipt_line_item import ReceiptLineItem
+    from app.models.user import User
+
 try:
     from pgvector.sqlalchemy import Vector
     VECTOR_TYPE = Vector(768)
 except ImportError:
     # Fallback if pgvector not installed locally (Docker will have it)
-    from sqlalchemy import JSON
     VECTOR_TYPE = None  # type: ignore[assignment]
 
 
-class ReceiptStatus(str, enum.Enum):
+class ReceiptStatus(StrEnum):
     QUEUED = "QUEUED"
     PROCESSING = "PROCESSING"
     READY_FOR_CLAIMS = "READY_FOR_CLAIMS"
@@ -97,19 +103,19 @@ class Receipt(Base):
     )
 
     # Relationships
-    group: Mapped["Group"] = relationship(  # type: ignore[name-defined]
+    group: Mapped["Group"] = relationship(
         "Group", back_populates="receipts"
     )
-    uploader: Mapped["User"] = relationship(  # type: ignore[name-defined]
+    uploader: Mapped["User"] = relationship(
         "User", foreign_keys=[uploaded_by], back_populates="uploaded_receipts"
     )
-    payer: Mapped["User"] = relationship(  # type: ignore[name-defined]
+    payer: Mapped["User"] = relationship(
         "User", foreign_keys=[paid_by], back_populates="paid_receipts"
     )
-    line_items: Mapped[list["ReceiptLineItem"]] = relationship(  # type: ignore[name-defined]
+    line_items: Mapped[list["ReceiptLineItem"]] = relationship(
         "ReceiptLineItem", back_populates="receipt", cascade="all, delete-orphan", lazy="select"
     )
-    ledger_entries: Mapped[list["LedgerEntry"]] = relationship(  # type: ignore[name-defined]
+    ledger_entries: Mapped[list["LedgerEntry"]] = relationship(
         "LedgerEntry", back_populates="receipt", lazy="select"
     )
 

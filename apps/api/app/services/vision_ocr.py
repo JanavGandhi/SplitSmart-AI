@@ -24,10 +24,9 @@ Output schema (Pydantic):
 from __future__ import annotations
 
 import json
-import logging
-import structlog
 from pathlib import Path
 
+import structlog
 from pydantic import BaseModel, Field, field_validator
 
 logger = structlog.get_logger(__name__)

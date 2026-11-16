@@ -21,7 +21,7 @@ import io
 import json
 import uuid
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -32,7 +32,6 @@ from app.services.vision_ocr import (
     _mock_extract,
     extract_receipt,
 )
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. OCR Mock Extraction
@@ -182,7 +181,6 @@ class TestPipelineTaskLogic:
 
     def test_publish_event_formats_correctly(self):
         """Verify Redis publish payload structure."""
-        import json
         mock_redis = MagicMock()
         from app.worker.tasks import _publish_event
 
@@ -220,8 +218,8 @@ class TestPipelineTaskLogic:
 @pytest.fixture()
 async def async_client():
     """HTTPX async test client with mocked DB dependency."""
-    from app.main import app
     from app.database import get_db
+    from app.main import app
 
     # Mock the DB session
     mock_session = MagicMock()
@@ -270,6 +268,7 @@ class TestReceiptUploadEndpoint:
         with (
             patch("app.worker.tasks.process_receipt") as mock_task,
             patch("app.api.v1.receipts._get_upload_dir") as mock_dir,
+            patch("app.api.v1.receipts.enforce_upload_rate_limit", new=AsyncMock()),
         ):
             # Mock the Celery task
             mock_result = MagicMock()
@@ -321,9 +320,9 @@ class TestReceiptUploadEndpoint:
         We inspect the route response class directly to avoid consuming
         the infinite-loop async generator in tests.
         """
-        from app.api.v1.receipts import receipt_events
-        from fastapi.responses import StreamingResponse
         import inspect
+
+        from app.api.v1.receipts import receipt_events
 
         # The function should be an async function returning a StreamingResponse
         assert inspect.iscoroutinefunction(receipt_events)

@@ -15,8 +15,6 @@ import pytest
 
 from app.services.debt_simplifier import (
     BalanceEntry,
-    Settlement,
-    SimplificationResult,
     compute_net_balances,
     simplify_debts,
     simplify_from_ledger,
@@ -103,7 +101,7 @@ class TestSimplifyDebts:
 
     def test_three_person_chain_simplifies(self):
         """A owes B 10000, B owes C 10000 → simplifies to A owes C 10000."""
-        u_a, u_b, u_c = _uid(), _uid(), _uid()
+        u_a, u_c = _uid(), _uid()
         # After netting: A=-10000, B=0, C=+10000
         balances = [
             BalanceEntry(user_id=u_a, display_name="A", net_balance_paise=-10000),
