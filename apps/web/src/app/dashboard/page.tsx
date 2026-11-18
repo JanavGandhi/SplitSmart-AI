@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, LoaderCircle, Plus, ReceiptText, Users } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
-import DemoLaunchButton from "@/components/DemoLaunchButton";
 import { api } from "@/lib/api";
 import type { Group } from "@/lib/types";
 
@@ -62,7 +61,7 @@ export default function DashboardPage() {
     <main className="min-h-screen">
       <SiteHeader />
       <div className="mx-auto max-w-7xl px-5 pb-20 pt-10 sm:px-8 sm:pt-14">
-        <div className="mb-9 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mb-9">
           <div>
             <p className="section-label">Start here</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-4xl">Your groups</h1>
@@ -70,7 +69,6 @@ export default function DashboardPage() {
               Create a group to add people and expenses, or join a room shared with you.
             </p>
           </div>
-          <DemoLaunchButton className="btn-secondary justify-center px-4 py-2.5" />
         </div>
 
         <div className="grid gap-5 lg:grid-cols-[1.4fr_.8fr]">

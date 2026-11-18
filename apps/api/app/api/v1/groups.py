@@ -55,7 +55,6 @@ async def create_group(
         name=payload.name,
         currency=payload.currency,
         invite_code=shortuuid.uuid()[:8].upper(),
-        is_sandbox=False,
     )
     db.add(group)
     await db.flush()
@@ -65,7 +64,6 @@ async def create_group(
         name=group.name,
         currency=group.currency,
         invite_code=group.invite_code,
-        is_sandbox=group.is_sandbox,
         created_by=group.created_by,
         created_at=group.created_at,
         member_count=0,
@@ -143,7 +141,6 @@ async def list_groups(
             name=group.name,
             currency=group.currency,
             invite_code=group.invite_code,
-            is_sandbox=group.is_sandbox,
             created_by=group.created_by,
             created_at=group.created_at,
             member_count=count,
@@ -176,7 +173,6 @@ async def get_group(
         name=group.name,
         currency=group.currency,
         invite_code=group.invite_code,
-        is_sandbox=group.is_sandbox,
         created_by=group.created_by,
         created_at=group.created_at,
         member_count=len(group.members),

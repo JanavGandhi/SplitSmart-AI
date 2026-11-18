@@ -120,8 +120,7 @@ splitsmart-ai/
 │           ├── components/
 │           ├── hooks/
 │           │   ├── useRoomWebSocket.ts
-│           │   ├── useReceiptSSE.ts
-│           │   └── useSandbox.ts
+│           │   └── useReceiptSSE.ts
 │           └── lib/
 │               ├── api.ts
 │               ├── types.ts
@@ -153,7 +152,6 @@ splitsmart-ai/
 | name | VARCHAR(200) | NOT NULL |
 | currency | VARCHAR(3) | DEFAULT 'INR' |
 | invite_code | VARCHAR(12) | UNIQUE, NOT NULL |
-| is_sandbox | BOOLEAN | DEFAULT FALSE |
 | created_by | UUID | FK to users.id |
 | created_at | TIMESTAMPTZ | DEFAULT NOW() |
 

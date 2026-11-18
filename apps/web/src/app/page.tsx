@@ -1,19 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Plus, Zap } from "lucide-react";
-import DemoLaunchButton from "@/components/DemoLaunchButton";
 
 export const metadata: Metadata = {
   title: "SplitSmart AI — Simple group expense splitting",
   description:
-    "Create a group, add shared expenses, and see what everyone owes. Try the sample group without signing up.",
+    "Create a group, add shared expenses, and see what everyone owes.",
 };
 
 const steps = [
   {
     number: "01",
     title: "Start a group",
-    description: "Create your own or open the sample group.",
+    description: "Create a group for the people sharing expenses.",
   },
   {
     number: "02",
@@ -57,16 +56,15 @@ export default function LandingPage() {
         <p className="mx-auto mt-6 max-w-xl text-base leading-7 text-slate-400 sm:text-lg">
           Add people, enter shared expenses, and see everyone&apos;s balance update as you go.
         </p>
-        <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <div className="mt-8 flex justify-center">
           <Link
             href="/dashboard"
             className="btn-primary justify-center px-6 py-3.5"
           >
             <Plus size={16} /> Create a group
           </Link>
-          <DemoLaunchButton className="btn-secondary justify-center px-5 py-3.5" />
         </div>
-        <p className="mt-4 text-xs text-slate-500">Or open a sample group to explore the finished result.</p>
+        <p className="mt-4 text-xs text-slate-500">Add people and expenses, then see who owes what.</p>
       </section>
 
       <section

@@ -23,7 +23,6 @@ class GroupResponse(BaseSchema):
     name: str
     currency: str
     invite_code: str
-    is_sandbox: bool
     created_by: UUID | None
     created_at: datetime
     member_count: int = 0

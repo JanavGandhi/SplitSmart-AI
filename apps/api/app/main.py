@@ -23,7 +23,6 @@ from app.api.v1.health import router as health_router
 from app.api.v1.ledger import router as ledger_router
 from app.api.v1.receipts import router as receipts_router
 from app.api.v1.rooms import router as rooms_router
-from app.api.v1.sandbox import router as sandbox_router
 from app.api.v1.stubs import (
     auth_router,
     metrics_router,
@@ -117,7 +116,7 @@ def create_app() -> FastAPI:
     app.include_router(expenses_router, prefix=api_prefix)
     app.include_router(receipts_router, prefix=api_prefix)
     app.include_router(rooms_router, prefix=api_prefix)
-    app.include_router(sandbox_router, prefix=api_prefix)
+
     app.include_router(ledger_router, prefix=api_prefix)
     app.include_router(copilot_router, prefix=api_prefix)
     app.include_router(metrics_router, prefix=api_prefix)

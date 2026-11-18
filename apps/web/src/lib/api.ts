@@ -9,7 +9,6 @@ import type {
   ManualExpense,
   Receipt,
   ReceiptUploadResponse,
-  SandboxResponse,
   SimplifiedDebtResult,
   SystemMetrics,
   UPIPayment,
@@ -179,9 +178,6 @@ export const api = {
         `/rooms/${encodeURIComponent(roomCode)}/finalize`,
         { method: "POST", body: payload, token },
       ),
-  },
-  sandbox: {
-    init: () => request<SandboxResponse>("/sandbox/init", { method: "POST" }),
   },
   metrics: {
     get: (signal?: AbortSignal) => request<SystemMetrics>("/metrics", { signal }),

@@ -20,7 +20,6 @@ export interface Group {
   name: string;
   currency: string;
   invite_code: string;
-  is_sandbox: boolean;
   created_by: string | null;
   created_at: string;
   member_count: number;
@@ -191,21 +190,6 @@ export interface FinalizeResponse {
     to_user_id: string;
     amount_paise: number;
   }>;
-}
-
-export interface SandboxResponse {
-  group_id: string;
-  group_name: string;
-  invite_code: string;
-  members: Array<{
-    user_id: string;
-    display_name: string;
-    avatar_color: string;
-    upi_id: string | null;
-  }>;
-  receipts: string[];
-  total_receipts: number;
-  total_ledger_entries: number;
 }
 
 export interface SystemMetrics {

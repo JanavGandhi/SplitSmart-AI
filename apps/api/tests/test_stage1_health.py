@@ -77,5 +77,5 @@ def test_fastapi_app_creates():
     # Verify all expected routes exist
     routes = {r.path for r in app.routes}  # type: ignore[attr-defined]
     assert "/api/v1/health" in routes
-    assert "/api/v1/sandbox/init" in routes
+    assert "/api/v1/sandbox/init" not in routes
     assert "/api/v1/groups" in routes

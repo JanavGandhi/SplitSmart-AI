@@ -9,7 +9,7 @@
 [![Redis](https://img.shields.io/badge/Cache%20%26%20Broker-Redis_7-DC382D.svg?logo=redis&logoColor=white)](https://redis.io)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-188%20Passed-success.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-187%20Passed-success.svg)]()
 
 ---
 
@@ -133,13 +133,11 @@ SplitSmart-AI/
 │   │   │   │   ├── math_engine.py      # Proportional split + paise invariant
 │   │   │   │   ├── debt_simplifier.py  # Min-Cash-Flow graph solver
 │   │   │   │   ├── upi_generator.py    # UPI URI & QR generator
-│   │   │   │   └── sandbox.py          # 1-Click recruiter dataset seeder
 │   │   │   └── api/v1/        # REST & WebSocket routers
 │   │   │       ├── health.py
 │   │   │       ├── groups.py
 │   │   │       ├── expenses.py
 │   │   │       ├── ledger.py
-│   │   │       └── sandbox.py
 │   │   └── tests/             # Automated test suite
 │   │       ├── test_math_engine.py
 │   │       ├── test_debt_simplifier.py
@@ -208,24 +206,6 @@ npm run dev
 
 ---
 
-## 🧪 1-Click Recruiter Sandbox & Interactive Demo
-
-Want to see SplitSmart AI's debt graph simplification in action without creating groups or typing expenses manually?
-
-Hit the sandbox seeder endpoint:
-```bash
-curl -X POST http://localhost:8000/api/v1/sandbox/init
-```
-
-This instantly creates the **"Goa Weekend Squad"** scenario:
-- **5 Members:** Aryan, Priya, Karan, Meera, and Dev.
-- **4 Real Bills:**
-  1. *Fisherman's Wharf Seafood Dinner* (12 items, ₹6,450.00)
-  2. *Blinkit Midnight Snacks Haul* (₹1,280.00)
-  3. *Curlies Beach Shack Sundowner* (₹3,750.00)
-  4. *Airport Innova Taxi Ride* (₹2,200.00)
-- **Automatic Graph Simplification:** 11 raw cross-debts are collapsed down to **4 clean UPI settlements** with zero rupee discrepancies.
-
 ---
 
 ## 🔬 Testing & Mathematical Verification
@@ -240,7 +220,7 @@ ruff check app tests
 ### Verified Test Highlights:
 - **100 Randomized Permutation Tests:** Generates 100 receipts with random totals, multiple claimants, arbitrary GST, delivery fees, and discounts. Verifies that the sum of claimant portions matches the receipt total with **0 paise deviation**.
 - **Min-Cash-Flow Invariant Tests:** Verifies circular debt elimination (e.g. $A \to B \to C \to A$), complex multi-debtor graph convergence, and balance preservation across all participants.
-- **183 Tests Passing.**
+- **187 Tests Passing.**
 - **Ruff:** full backend application and test suite passes.
 
 ---
@@ -250,7 +230,7 @@ ruff check app tests
 | Stage | Milestone | Status | Details |
 |---|---|:---:|---|
 | **Stage 1** | Monorepo Scaffolding, Docker & Database Layer | 🟢 Completed | PostgreSQL 16 (pgvector), Redis 7, SQLAlchemy 2 Async, Alembic migrations, Next.js 15 scaffold. |
-| **Stage 2** | Core Math Engine, Debt Simplifier & Sandbox | 🟢 Completed | Largest Remainder Method, Min-Cash-Flow algorithm, UPI QR codes, 1-Click Goa Squad sandbox seeder. |
+| **Stage 2** | Core Math Engine & Debt Simplifier | 🟢 Completed | Largest Remainder Method, Min-Cash-Flow algorithm, and UPI QR codes. |
 | **Stage 3** | Async Vision AI Receipt Pipeline & SSE | 🟢 Completed | Gemini 2.0 Flash OCR, Celery asynchronous processing queue, live Server-Sent Events progress tracking. |
 | **Stage 4** | Multiplayer No-Login WebSocket Claim Room | 🟢 Completed | Room-scoped guest JWTs, Redis Pub/Sub claims, paise recalculation, roommate simulator, and idempotent ledger finalization. |
 | **Stage 5** | Next.js UI & Interactive Graphs | 🟡 Implemented | Dashboard, live claim room, group debt graph, UPI payment flow, and metrics. The live walkthrough needs the Docker Compose stack and a configured Gemini key for Copilot. |

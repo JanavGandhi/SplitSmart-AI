@@ -74,11 +74,8 @@
 - [x] `services/debt_simplifier.py` — Min-Cash-Flow O(N log N) algorithm
 - [x] `services/upi_generator.py` — UPI deep link + QR code
 
-### 2.2 Sandbox Endpoint
-- [x] `POST /api/v1/sandbox/init` — Creates "Goa Weekend Squad" demo group
-  - 5 members (Aryan, Priya, Karan, Meera, Dev)
-  - 4 receipts: 12-item restaurant bill, Blinkit grocery haul, beach shack, taxi split
-  - Cross-debts that simplify from 11 transactions → 4
+### 2.2 One-Click Sandbox (Removed)
+- [x] Removed `POST /api/v1/sandbox/init` and its seeder implementation.
 
 ### 2.3 Group & Ledger Endpoints
 - [x] `GET/POST /api/v1/groups` — Group CRUD
@@ -177,7 +174,7 @@
 ### 5.3 Hooks
 - [x] `useRoomWebSocket` — WebSocket management
 - [x] `useReceiptSSE` — SSE streaming
-- [x] `useSandbox` — Demo sandbox initialization
+- [x] `useSandbox` — Removed with the one-click demo feature.
 
 ### 5.4 Verification Gate
 - [x] Browser route smoke: landing, dashboard, metrics, group, and room routes load
