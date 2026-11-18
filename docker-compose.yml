@@ -40,7 +40,7 @@ services:
     environment:
       APP_ENV: development
       DATABASE_URL: postgresql+asyncpg://splitsmart:splitsmart@postgres:5432/splitsmart
-      SYNC_DATABASE_URL: postgresql://splitsmart:splitsmart@postgres:5432/splitsmart
+      SYNC_DATABASE_URL: postgresql+psycopg2://splitsmart:splitsmart@postgres:5432/splitsmart
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/1
       CELERY_RESULT_BACKEND: redis://redis:6379/2
@@ -76,7 +76,7 @@ services:
     environment:
       APP_ENV: development
       DATABASE_URL: postgresql+asyncpg://splitsmart:splitsmart@postgres:5432/splitsmart
-      SYNC_DATABASE_URL: postgresql://splitsmart:splitsmart@postgres:5432/splitsmart
+      SYNC_DATABASE_URL: postgresql+psycopg2://splitsmart:splitsmart@postgres:5432/splitsmart
       REDIS_URL: redis://redis:6379/0
       CELERY_BROKER_URL: redis://redis:6379/1
       CELERY_RESULT_BACKEND: redis://redis:6379/2

@@ -27,7 +27,7 @@ class Settings(BaseSettings):
         "postgresql+asyncpg://splitsmart:splitsmart@localhost:5432/splitsmart"
     )
     sync_database_url: str = (
-        "postgresql://splitsmart:splitsmart@localhost:5432/splitsmart"
+        "postgresql+psycopg2://splitsmart:splitsmart@localhost:5432/splitsmart"
     )
     db_pool_size: int = 10
     db_max_overflow: int = 20

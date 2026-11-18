@@ -16,7 +16,7 @@ if config.config_file_name is not None:
 # Override sqlalchemy.url from environment variable if set
 sync_db_url = os.getenv(
     "SYNC_DATABASE_URL",
-    "postgresql://splitsmart:splitsmart@localhost:5432/splitsmart",
+    "postgresql+psycopg2://splitsmart:splitsmart@localhost:5432/splitsmart",
 )
 config.set_main_option("sqlalchemy.url", sync_db_url)
 
