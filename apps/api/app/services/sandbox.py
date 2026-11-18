@@ -28,6 +28,11 @@ from app.services.math_engine import (
     compute_split,
 )
 
+
+def _sandbox_idempotency_key() -> str:
+    return f"sandbox-{uuid.uuid4().hex}"
+
+
 # ── Sandbox Member Data ──────────────────────────────────────────────────────
 SANDBOX_MEMBERS = [
     {"display_name": "Aryan", "avatar_color": "#6366f1", "upi_id": "aryan@paytm"},
@@ -282,7 +287,7 @@ async def _create_receipt_with_splits(
         delivery_fee_paise=receipt_data["delivery_fee_paise"],
         discount_paise=receipt_data["discount_paise"],
         total_paise=total_paise,
-        idempotency_key=f"sandbox-{group.id}-{receipt_data['merchant_name']}-{uuid.uuid4().hex[:8]}",
+        idempotency_key=_sandbox_idempotency_key(),
     )
     db.add(receipt)
     await db.flush()
@@ -375,7 +380,7 @@ async def _create_receipt_with_splits(
             to_user_id=payer.id,  # creditor (payer)
             amount_paise=user_split.final_paise,
             entry_type=EntryType.EXPENSE_SHARE,
-            idempotency_key=f"sandbox-{receipt.id}-{user_id}-{uuid.uuid4().hex[:8]}",
+            idempotency_key=_sandbox_idempotency_key(),
         )
         db.add(ledger_entry)
         ledger_entries.append({
