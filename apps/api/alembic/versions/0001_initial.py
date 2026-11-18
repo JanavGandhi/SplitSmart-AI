@@ -27,14 +27,16 @@ def upgrade() -> None:
     receipt_status_enum = postgresql.ENUM(
         "QUEUED", "PROCESSING", "READY_FOR_CLAIMS", "LOCKED", "SETTLED", "FAILED",
         name="receipt_status",
+        create_type=False,
     )
-    receipt_status_enum.create(op.get_bind())
+    receipt_status_enum.create(op.get_bind(), checkfirst=True)
 
     entry_type_enum = postgresql.ENUM(
         "EXPENSE_SHARE", "SETTLEMENT",
         name="entry_type",
+        create_type=False,
     )
-    entry_type_enum.create(op.get_bind())
+    entry_type_enum.create(op.get_bind(), checkfirst=True)
 
     # ── users ──────────────────────────────────────────────────────────────
     op.create_table(
