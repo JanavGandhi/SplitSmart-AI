@@ -32,6 +32,21 @@ export interface GroupMember {
   joined_at: string;
 }
 
+export interface ManualExpenseParticipant {
+  user_id: string;
+  share_paise: number;
+}
+
+export interface ManualExpense {
+  id: string;
+  group_id: string;
+  description: string;
+  amount_paise: number;
+  paid_by_user_id: string;
+  participants: ManualExpenseParticipant[];
+  created_at: string;
+}
+
 export interface GroupDetail extends Group {
   members: GroupMember[];
 }

@@ -9,7 +9,7 @@
 [![Redis](https://img.shields.io/badge/Cache%20%26%20Broker-Redis_7-DC382D.svg?logo=redis&logoColor=white)](https://redis.io)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB.svg?logo=python&logoColor=white)](https://www.python.org)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-183%20Passed-success.svg)]()
+[![Tests](https://img.shields.io/badge/Tests-188%20Passed-success.svg)]()
 
 ---
 
@@ -126,7 +126,8 @@ SplitSmart-AI/
 │   │   │   │   ├── receipt.py
 │   │   │   │   ├── receipt_line_item.py
 │   │   │   │   ├── item_claim.py
-│   │   │   │   └── ledger_entry.py
+│   │   │   │   ├── ledger_entry.py
+│   │   │   │   └── manual_expense.py
 │   │   │   ├── schemas/       # Pydantic validation & response schemas
 │   │   │   ├── services/      # Pure business logic & algorithms
 │   │   │   │   ├── math_engine.py      # Proportional split + paise invariant
@@ -136,11 +137,13 @@ SplitSmart-AI/
 │   │   │   └── api/v1/        # REST & WebSocket routers
 │   │   │       ├── health.py
 │   │   │       ├── groups.py
+│   │   │       ├── expenses.py
 │   │   │       ├── ledger.py
 │   │   │       └── sandbox.py
 │   │   └── tests/             # Automated test suite
 │   │       ├── test_math_engine.py
 │   │       ├── test_debt_simplifier.py
+│   │       ├── test_manual_expenses.py
 │   │       └── test_stage1_health.py
 │   └── web/                   # Next.js 15 Frontend
 │       ├── src/
@@ -169,6 +172,15 @@ Open the web app at [http://localhost:3000](http://localhost:3000), API docs at 
 To enable live Gemini OCR and Copilot responses, set `GEMINI_API_KEY` in your shell or a root `.env` file before starting. Without the key, OCR uses its configured mock mode and Copilot returns an explicit `503`. Copilot questions and a minimal group summary (member names, balances, and recent receipt totals) are sent to Google Gemini when configured. Do not use the development Compose defaults in production.
 
 Stop the stack with `docker compose down`; add `-v` only if you intend to delete its database, Redis, and uploaded-receipt data.
+
+### Try a hands-on group split
+
+1. Open the dashboard and create a group.
+2. Open that group, add each person by name, and enter an expense with its payer.
+3. Keep the people sharing that expense selected; SplitSmart divides the total equally, including any leftover paise/cents.
+4. Review the balances and suggested settlements. Record a payment from a suggested settlement to refresh the balances.
+
+Receipt upload and the existing item-claim flow are also available from the group page.
 
 ### Manual development setup
 

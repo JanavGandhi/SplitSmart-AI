@@ -2,10 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, LoaderCircle, ReceiptText, RefreshCw, Users } from "lucide-react";
+import { ArrowRight, LoaderCircle, ReceiptText, RefreshCw } from "lucide-react";
 import AvatarPill from "@/components/AvatarPill";
 import CopilotDrawer from "@/components/CopilotDrawer";
 import DebtGraph from "@/components/DebtGraph";
+import ManualExpenseWorkspace from "@/components/ManualExpenseWorkspace";
+import ReceiptUploadForm from "@/components/ReceiptUploadForm";
 import SiteHeader from "@/components/SiteHeader";
 import UPISettleModal from "@/components/UPISettleModal";
 import { api } from "@/lib/api";
@@ -13,6 +15,7 @@ import type {
   GroupBalance,
   GroupDetail,
   GroupBalancesResponse,
+  ManualExpense,
   Receipt,
   Settlement,
   SimplifiedDebtResult,
@@ -24,6 +27,7 @@ export default function GroupView({ groupId }: { groupId: string }) {
   const [balances, setBalances] = useState<GroupBalancesResponse | null>(null);
   const [debts, setDebts] = useState<SimplifiedDebtResult | null>(null);
   const [receipts, setReceipts] = useState<Receipt[]>([]);
+  const [expenses, setExpenses] = useState<ManualExpense[]>([]);
   const [selectedSettlement, setSelectedSettlement] = useState<Settlement | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -33,16 +37,18 @@ export default function GroupView({ groupId }: { groupId: string }) {
     if (background) setRefreshing(true);
     else setLoading(true);
     try {
-      const [groupData, balanceData, debtData, receiptData] = await Promise.all([
+      const [groupData, balanceData, debtData, receiptData, expenseData] = await Promise.all([
         api.groups.get(groupId),
         api.groups.balances(groupId),
         api.groups.simplified(groupId),
         api.receipts.forGroup(groupId),
+        api.groups.expenses(groupId),
       ]);
       setGroup(groupData);
       setBalances(balanceData);
       setDebts(debtData);
       setReceipts(receiptData);
+      setExpenses(expenseData);
       setError(null);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Group data could not be loaded");
@@ -101,6 +107,14 @@ export default function GroupView({ groupId }: { groupId: string }) {
           </button>
         </div>
 
+        <ManualExpenseWorkspace
+          groupId={groupId}
+          currency={group.currency}
+          members={group.members.map((member) => member.user)}
+          expenses={expenses}
+          onChanged={() => refresh(true)}
+        />
+
         <div className="grid gap-3 sm:grid-cols-3">
           {[
             ["Members", group.member_count.toString()],
@@ -140,22 +154,7 @@ export default function GroupView({ groupId }: { groupId: string }) {
             </div>
           )}
         </section>
-
-        <section className="glass-card mt-5 p-5 sm:p-6">
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <div>
-              <p className="section-label">People</p>
-              <h2 className="mt-1 text-lg font-semibold">Group members</h2>
-            </div>
-            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500"><Users size={14} /> {group.members.length}</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {group.members.map((member) => (
-              <AvatarPill key={member.user.id} person={member.user} />
-            ))}
-          </div>
-        </section>
-
+        <ReceiptUploadForm groupId={groupId} />
         <section className="glass-card mt-5 p-5 sm:p-6">
           <div className="mb-5 flex items-center justify-between gap-3">
             <div>
@@ -166,7 +165,7 @@ export default function GroupView({ groupId }: { groupId: string }) {
           </div>
           {receipts.length === 0 ? (
             <p className="rounded-xl border border-dashed border-white/10 p-5 text-center text-sm text-slate-500">
-              No receipts in this group yet. Upload one from the dashboard.
+              No uploaded receipts yet. You can still add and split expenses above.
             </p>
           ) : (
             <div className="grid gap-3 md:grid-cols-2">

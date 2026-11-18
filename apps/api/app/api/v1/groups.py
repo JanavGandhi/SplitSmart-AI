@@ -11,6 +11,7 @@ Endpoints:
 from __future__ import annotations
 
 import uuid
+from datetime import UTC, datetime
 
 import shortuuid
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -25,7 +26,14 @@ from app.models.item_claim import ItemClaim
 from app.models.ledger_entry import LedgerEntry
 from app.models.receipt import Receipt
 from app.models.receipt_line_item import ReceiptLineItem
-from app.schemas.group import GroupCreate, GroupDetailResponse, GroupResponse, MemberResponse
+from app.models.user import User
+from app.schemas.group import (
+    GroupCreate,
+    GroupDetailResponse,
+    GroupMemberCreate,
+    GroupResponse,
+    MemberResponse,
+)
 from app.schemas.receipt import ReceiptResponse
 from app.schemas.user import UserPublic
 from app.services.debt_simplifier import (
@@ -61,6 +69,54 @@ async def create_group(
         created_by=group.created_by,
         created_at=group.created_at,
         member_count=0,
+    )
+
+
+@router.post(
+    "/{group_id}/members",
+    response_model=MemberResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+async def add_group_member(
+    group_id: uuid.UUID,
+    payload: GroupMemberCreate,
+    db: AsyncSession = Depends(get_db),
+):
+    """Add a named guest directly to a group."""
+    group_result = await db.execute(select(Group).where(Group.id == group_id))
+    if group_result.scalar_one_or_none() is None:
+        raise HTTPException(status_code=404, detail="Group not found")
+
+    display_name = payload.display_name.strip()
+    if not display_name:
+        raise HTTPException(status_code=422, detail="Name cannot be blank")
+
+    user = User(
+        id=uuid.uuid4(),
+        display_name=display_name,
+        upi_id=payload.upi_id,
+        avatar_color="#6366f1",
+        is_guest=True,
+    )
+    membership = GroupMember(
+        id=uuid.uuid4(),
+        group_id=group_id,
+        user_id=user.id,
+        joined_at=datetime.now(UTC),
+    )
+    db.add(user)
+    db.add(membership)
+    await db.flush()
+
+    return MemberResponse(
+        id=membership.id,
+        user=UserPublic(
+            id=user.id,
+            display_name=user.display_name,
+            avatar_color=user.avatar_color,
+            is_guest=user.is_guest,
+        ),
+        joined_at=membership.joined_at,
     )
 
 

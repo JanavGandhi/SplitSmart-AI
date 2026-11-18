@@ -7,6 +7,7 @@ from app.models.group import Group  # noqa: F401
 from app.models.group_member import GroupMember  # noqa: F401
 from app.models.item_claim import ItemClaim  # noqa: F401
 from app.models.ledger_entry import EntryType, LedgerEntry  # noqa: F401
+from app.models.manual_expense import ExpenseParticipant, ManualExpense  # noqa: F401
 from app.models.receipt import Receipt, ReceiptStatus  # noqa: F401
 from app.models.receipt_line_item import ReceiptLineItem  # noqa: F401
 from app.models.user import User  # noqa: F401
@@ -22,4 +23,6 @@ __all__ = [
     "ItemClaim",
     "LedgerEntry",
     "EntryType",
+    "ManualExpense",
+    "ExpenseParticipant",
 ]

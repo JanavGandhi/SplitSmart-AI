@@ -13,6 +13,11 @@ class GroupCreate(BaseSchema):
     currency: str = Field(default="INR", pattern=r"^[A-Z]{3}$")
 
 
+class GroupMemberCreate(BaseSchema):
+    display_name: str = Field(..., min_length=1, max_length=100)
+    upi_id: str | None = Field(default=None, max_length=100)
+
+
 class GroupResponse(BaseSchema):
     id: UUID
     name: str

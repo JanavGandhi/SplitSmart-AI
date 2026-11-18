@@ -3,8 +3,10 @@ import type {
   Group,
   GroupBalancesResponse,
   GroupDetail,
+  GroupMember,
   GuestJoinResponse,
   HealthResponse,
+  ManualExpense,
   Receipt,
   ReceiptUploadResponse,
   SandboxResponse,
@@ -91,6 +93,32 @@ export const api = {
       request<Group>("/groups", { method: "POST", body: data }),
     get: (id: string, signal?: AbortSignal) =>
       request<GroupDetail>(`/groups/${encodeURIComponent(id)}`, { signal }),
+    addMember: (
+      id: string,
+      data: { display_name: string; upi_id?: string },
+    ) =>
+      request<GroupMember>(`/groups/${encodeURIComponent(id)}/members`, {
+        method: "POST",
+        body: data,
+      }),
+    expenses: (id: string, signal?: AbortSignal) =>
+      request<ManualExpense[]>(
+        `/groups/${encodeURIComponent(id)}/expenses`,
+        { signal },
+      ),
+    addExpense: (
+      id: string,
+      data: {
+        description: string;
+        amount_paise: number;
+        paid_by_user_id: string;
+        participant_user_ids: string[];
+      },
+    ) =>
+      request<ManualExpense>(`/groups/${encodeURIComponent(id)}/expenses`, {
+        method: "POST",
+        body: data,
+      }),
     balances: (id: string, signal?: AbortSignal) =>
       request<GroupBalancesResponse>(
         `/groups/${encodeURIComponent(id)}/balances`,

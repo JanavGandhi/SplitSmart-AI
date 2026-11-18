@@ -17,6 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.api.v1.copilot import router as copilot_router
+from app.api.v1.expenses import router as expenses_router
 from app.api.v1.groups import router as groups_router
 from app.api.v1.health import router as health_router
 from app.api.v1.ledger import router as ledger_router
@@ -113,6 +114,7 @@ def create_app() -> FastAPI:
     app.include_router(health_router, prefix=api_prefix)
     app.include_router(auth_router, prefix=api_prefix)
     app.include_router(groups_router, prefix=api_prefix)
+    app.include_router(expenses_router, prefix=api_prefix)
     app.include_router(receipts_router, prefix=api_prefix)
     app.include_router(rooms_router, prefix=api_prefix)
     app.include_router(sandbox_router, prefix=api_prefix)

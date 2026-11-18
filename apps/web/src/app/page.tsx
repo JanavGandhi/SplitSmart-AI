@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight, Plus, Zap } from "lucide-react";
 import DemoLaunchButton from "@/components/DemoLaunchButton";
 
 export const metadata: Metadata = {
@@ -18,12 +18,12 @@ const steps = [
   {
     number: "02",
     title: "Add expenses",
-    description: "Keep shared bills and item claims in one place.",
+    description: "Enter a bill and choose who shares it.",
   },
   {
     number: "03",
     title: "Settle up",
-    description: "See who owes what and record payments.",
+    description: "See balances and record payments.",
   },
 ];
 
@@ -55,18 +55,18 @@ export default function LandingPage() {
           <span className="text-indigo-300">Settle up.</span>
         </h1>
         <p className="mx-auto mt-6 max-w-xl text-base leading-7 text-slate-400 sm:text-lg">
-          Create a group, add expenses, and see what everyone owes. No spreadsheets or manual math.
+          Add people, enter shared expenses, and see everyone&apos;s balance update as you go.
         </p>
         <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <DemoLaunchButton className="btn-primary justify-center px-6 py-3.5" />
           <Link
             href="/dashboard"
-            className="rounded-xl px-5 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/[0.05] hover:text-white"
+            className="btn-primary justify-center px-6 py-3.5"
           >
-            Open dashboard
+            <Plus size={16} /> Create a group
           </Link>
+          <DemoLaunchButton className="btn-secondary justify-center px-5 py-3.5" />
         </div>
-        <p className="mt-4 text-xs text-slate-500">Try the sample group without signing up.</p>
+        <p className="mt-4 text-xs text-slate-500">Or open a sample group to explore the finished result.</p>
       </section>
 
       <section
