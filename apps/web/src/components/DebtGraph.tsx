@@ -67,15 +67,19 @@ export default function DebtGraph({
           {settlements.map((settlement, index) => {
             const from = positions.get(settlement.from_user_id) ?? POSITIONS[0];
             const to = positions.get(settlement.to_user_id) ?? POSITIONS[1];
+            const dx = to.x - from.x;
+            const dy = to.y - from.y;
+            const distance = Math.hypot(dx, dy) || 1;
             const labelX = (from.x + to.x) / 2;
             const labelY = (from.y + to.y) / 2 - 8 - (index % 2) * 7;
             return (
               <g key={`${settlement.from_user_id}-${settlement.to_user_id}`}>
+                <title>{`${settlement.from_display_name} owes ${settlement.to_display_name} ${paiseToCurrency(settlement.amount_paise)}`}</title>
                 <line
-                  x1={from.x}
-                  y1={from.y}
-                  x2={to.x}
-                  y2={to.y}
+                  x1={from.x + (dx / distance) * 26}
+                  y1={from.y + (dy / distance) * 26}
+                  x2={to.x - (dx / distance) * 32}
+                  y2={to.y - (dy / distance) * 32}
                   stroke="#7585ff"
                   strokeOpacity=".56"
                   strokeWidth="2"
