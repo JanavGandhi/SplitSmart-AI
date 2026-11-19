@@ -1,0 +1,161 @@
+{
+  "planHash": "04536db2b85989b0ee22470e95c8e670c02ed00a0703446e44078af0f834f723",
+  "phase": "postupgrade",
+  "recordedAtUtc": "2026-11-19T12:21:39.8945013Z",
+  "retryCount": 0,
+  "resetBaseline": false,
+  "complete": true,
+  "result": {
+    "setupSucceeded": true,
+    "setupDurationMs": 56433,
+    "setupFailureOutput": null,
+    "assertions": [
+      {
+        "name": "type-check",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E splitsmart-web@1.0.0 type-check\r\n\u003E tsc --noEmit\r\n\r\n",
+        "durationMs": 5535
+      },
+      {
+        "name": "lint",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E splitsmart-web@1.0.0 lint\r\n\u003E eslint src tests next.config.ts\r\n\r\n",
+        "durationMs": 6707
+      },
+      {
+        "name": "tests-pass",
+        "kind": "process",
+        "verificationMethod": "test-results",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E splitsmart-web@1.0.0 test\r\n\u003E vitest run\r\n\r\n\r\n RUN  v5.1.1 D:/SplitSmart-AI/apps/web\r\n\r\n\r\n Test Files  1 passed (1)\r\n      Tests  2 passed (2)\r\n   Start at  17:51:16\r\n   Duration  1.30s (transform 42%, tests 28%, import 22%, worker 7%)\r\n\r\n",
+        "durationMs": 2443,
+        "testResults": {
+          "testFramework": "vitest",
+          "runnerDetectedFrom": "package_json",
+          "testsTotal": 2,
+          "testsPassed": 2,
+          "testsFailed": 0,
+          "testsSkipped": 0,
+          "parseFailed": false
+        }
+      },
+      {
+        "name": "production-build",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E splitsmart-web@1.0.0 build\r\n\u003E next build\r\n\r\n\u25B2 Next.js 16.4.6 (Turbopack)\r\n\u2713 Running next.config.ts took 82ms\r\n\r\n  Creating an optimized production build ...\r\n\u2713 Compiled successfully in 2.4s\r\n  Running TypeScript ...\r\n  Finished TypeScript in 4.3s ...\r\n  Collecting page data using 7 workers ...\r\n  Generating static pages using 7 workers (0/5) ...\r\n  Generating static pages using 7 workers (1/5) \r\n  Generating static pages using 7 workers (2/5) \r\n  Generating static pages using 7 workers (3/5) \r\n\u2713 Generating static pages using 7 workers (5/5) in 302ms\r\n  Finalizing page optimization ...\r\n\r\nRoute (app)\r\n\u250C \u25CB /\r\n\u251C \u25CB /_not-found\r\n\u251C \u25CB /dashboard\r\n\u251C \u0192 /groups/[id]\r\n\u251C \u25CB /metrics\r\n\u2514 \u0192 /room/[code]\r\n\r\n\r\n\u25CB  (Static)   prerendered as static content\r\n\u0192  (Dynamic)  server-rendered on demand\r\n\r\n",
+        "durationMs": 14813
+      },
+      {
+        "name": "home-route-http-200",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": null,
+        "outputSample": "HTTP 200\n\u003C!DOCTYPE html\u003E\u003Chtml lang=\u0022en\u0022 class=\u0022dark\u0022\u003E\u003Chead\u003E\u003Cmeta charSet=\u0022utf-8\u0022/\u003E\u003Cmeta name=\u0022viewport\u0022 content=\u0022width=device-width, initial-scale=1\u0022/\u003E\u003Clink rel=\u0022stylesheet\u0022 href=\u0022/_next/static/chunks/src_app_globals_162hn9oqc8uss.css\u0022 data-precedence=\u0022next_static/chunks/src_app_globals_162hn9oqc8uss.css\u0022/\u003E\u003Clink rel=\u0022preload\u0022 as=\u0022script\u0022 fetchPriority=\u0022low\u0022 href=\u0022/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_0fb9-gqu7_t97._.js\u0022/\u003E\u003Cscript src=\u0022/_next/static/chunks/1daa_next_dist_compiled_react-dom_cjs_react-dom-client_development_0mp0cp_t-ezj9.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/1q96_modules_next_dist_compiled_react-dom_cjs_react-dom_development_1sqry0_53krp4.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_compiled_react-dom_0grqycjrj6mju._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_164kp-67asdr9._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_090k2jmam7qwg.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_compiled_1amofcmz--cdp._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_client_1165-soo5tfpf._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_05y3oi5z9mc_3._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_%40swc_helpers_cjs_1r9vbqwj2323d._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/_1anvha4rlo79g._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/turbopack-_11q0wbt2n0d9y._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/_219uq1sj0q91c._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_20wefz_f1k6jn._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_0s7-rh1abjcvb._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cmeta name=\u0022theme-color\u0022 content=\u0022#6366f1\u0022/\u003E\u003Cmeta name=\u0022color-scheme\u0022 content=\u0022dark\u0022/\u003E\u003Ctitle\u003ESplitSmart AI \u2014 Simple group expense splitting\u003C/title\u003E\u003Cmeta name=\u0022description\u0022 content=\u0022Create a group, add shared expenses, and see what everyone owes.\u0022/\u003E\u003Cmeta name=\u0022author\u0022 content=\u0022SplitSmart AI\u0022/\u003E\u003Cmeta name=\u0022keywords\u0022 content=\u0022receipt splitting,expense tracker,bill splitter,splitwise alternative,UPI payments,group expenses,AI receipt scanner\u0022/\u003E\u003Cmeta name=\u0022robots\u0022 content=\u0022index, follow\u0022/\u003E\u003Cmeta property=\u0022og:title\u0022 content=\u0022SplitSmart AI\u0022/\u003E\u003Cmeta property=\u0022og:description\u0022 content=\u0022Zero-typing AI receipt splitting with real-time multiplayer claim rooms\u0022/\u003E\u003Cmeta property=\u0022og:site_name\u0022 content=\u0022SplitSmart AI\u0022/\u003E\u003Cmeta property=\u0022og:type\u0022 content=\u0022website\u0022/\u003E\u003Cmeta name=\u0022twitter:card\u0022 content=\u0022summary\u0022/\u003E\u003Cmeta name=\u0022twitter:title\u0022 content=\u0022SplitSmart AI\u0022/\u003E\u003Cmeta name=\u0022twitter:description\u0022 content=\u0022Zero-typing AI receipt splitting with real-time multiplayer claim rooms\u0022/\u003E\u003Clink rel=\u0022preconnect\u0022 href=\u0022https://fonts.googleapis.com\u0022/\u003E\u003Clink rel=\u0022preconnect\u0022 href=\u0022https://fonts.gstatic.com\u0022 crossorigin=\u0022anonymous\u0022/\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_build_polyfills_polyfill-nomodule.js\u0022 noModule=\u0022\u0022\u003E\u003C/script\u003E\u003C/head\u003E\u003Cbody class=\u0022bg-[hsl(224,71%,4%)] text-[hsl(210,40%,96%)] antialiased\u0022\u003E\u003Cdiv hidden=\u0022\u0022\u003E\u003C!--$--\u003E\u003C!--/$--\u003E\u003C/div\u003E\u003Cmain class=\u0022min-h-screen\u0022\u003E\u003Cheader class=\u0022border-b border-white/[0.07]\u0022\u003E\u003Cdiv class=\u0022mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8\u0022\u003E\u003Ca class=\u0022flex items-center gap-3\u0022 aria-label=\u0022SplitSmart home\u0022 href=\u0022/\u0022\u003E\u003Cspan class=\u0022flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-teal-400 text-white\u0022\u003E\u003Csvg xmlns=\u0022http://www.w3.org/2000/svg\u0022 width=\u002218\u0022 height=\u002218\u0022 viewBox=\u00220 0 24 24\u0022 fill=\u0022currentColor\u0022 stroke=\u0022currentColor\u0022 stroke-width=\u00222\u0022 stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 class=\u0022lucide lucide-zap\u0022 aria-hidden=\u0022true\u0022\u003E\u003Cpath d=\u0022M15.914 4a1.5 1.5 0 00-2.474-1.561l-9 9A1.5 1.5 0 005.5 14h4.002a.5.5 0 01.471.666L8.086 20a1.5 1.5 0 002.475 1.56l9-9A1.5 1.5 0 0018.5 10h-3.997a.5.5 0 01-.472-.667z\u0022\u003E\u003C/path\u003E\u003C/svg\u003E\u003C/span\u003E\u003Cspan class=\u0022font-semibold tracking-tight\u0022\u003ESplitSmart\u003C/spa\n\u2026[truncated]",
+        "durationMs": 7633
+      }
+    ],
+    "executions": [
+      {
+        "source": "setup[0]",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "ci"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "type-check",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "type-check"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "lint",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "lint"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "tests-pass",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "test"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "production-build",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "build"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "home-route-http-200",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "dev",
+          "--",
+          "--hostname",
+          "127.0.0.1",
+          "--port",
+          "3000"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      }
+    ]
+  }
+}

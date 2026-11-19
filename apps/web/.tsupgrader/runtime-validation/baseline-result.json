@@ -1,0 +1,161 @@
+{
+  "planHash": "04536db2b85989b0ee22470e95c8e670c02ed00a0703446e44078af0f834f723",
+  "phase": "baseline",
+  "recordedAtUtc": "2026-11-19T12:12:53.9844061Z",
+  "retryCount": 0,
+  "resetBaseline": true,
+  "complete": true,
+  "result": {
+    "setupSucceeded": true,
+    "setupDurationMs": 44744,
+    "setupFailureOutput": null,
+    "assertions": [
+      {
+        "name": "type-check",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E splitsmart-web@1.0.0 type-check\r\n\u003E tsc --noEmit\r\n\r\n",
+        "durationMs": 4645
+      },
+      {
+        "name": "lint",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E splitsmart-web@1.0.0 lint\r\n\u003E next lint\r\n\r\n\u2714 No ESLint warnings or errors\r\n",
+        "durationMs": 6875
+      },
+      {
+        "name": "tests-pass",
+        "kind": "process",
+        "verificationMethod": "test-results",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E splitsmart-web@1.0.0 test\r\n\u003E vitest run\r\n\r\n\r\n RUN  v5.1.1 D:/SplitSmart-AI/apps/web\r\n\r\n\r\n Test Files  1 passed (1)\r\n      Tests  2 passed (2)\r\n   Start at  17:42:02\r\n   Duration  1.23s (transform 43%, import 24%, tests 22%, worker 11%, environment 1%)\r\n\r\n",
+        "durationMs": 2545,
+        "testResults": {
+          "testFramework": "vitest",
+          "runnerDetectedFrom": "package_json",
+          "testsTotal": 2,
+          "testsPassed": 2,
+          "testsFailed": 0,
+          "testsSkipped": 0,
+          "parseFailed": false
+        }
+      },
+      {
+        "name": "production-build",
+        "kind": "process",
+        "verificationMethod": "exit-code",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": 0,
+        "outputSample": "\r\n\u003E splitsmart-web@1.0.0 build\r\n\u003E next build\r\n\r\n   \u25B2 Next.js 15.3.3\r\n\r\n   Creating an optimized production build ...\r\n \u2713 Compiled successfully in 3.0s\r\n   Linting and checking validity of types ...\r\n   Collecting page data ...\r\n   Generating static pages (0/6) ...\r\n   Generating static pages (1/6) \r\n   Generating static pages (2/6) \r\n   Generating static pages (4/6) \r\n \u2713 Generating static pages (6/6)\r\n   Finalizing page optimization ...\r\n   Collecting build traces ...\r\n\r\nRoute (app)                                 Size  First Load JS\r\n\u250C \u25CB /                                      172 B         105 kB\r\n\u251C \u25CB /_not-found                            977 B         102 kB\r\n\u251C \u25CB /dashboard                           4.49 kB         109 kB\r\n\u251C \u0192 /groups/[id]                         17.5 kB         122 kB\r\n\u251C \u25CB /metrics                             3.62 kB         108 kB\r\n\u2514 \u0192 /room/[code]                         7.76 kB         112 kB\r\n\u002B First Load JS shared by all             101 kB\r\n  \u251C chunks/4bd1b696-6b3d2ffc808178c5.js  53.2 kB\r\n  \u251C chunks/684-e964e42213a116a9.js       45.9 kB\r\n  \u2514 other shared chunks (total)          1.99 kB\r\n\r\n\r\n\u25CB  (Static)   prerendered as static content\r\n\u0192  (Dynamic)  server-rendered on demand\r\n\r\n",
+        "durationMs": 41327
+      },
+      {
+        "name": "home-route-http-200",
+        "kind": "http-probe",
+        "verificationMethod": "http-status",
+        "passed": true,
+        "timedOut": false,
+        "skipped": false,
+        "skippedReason": null,
+        "exitCode": null,
+        "outputSample": "HTTP 200\n\u003C!DOCTYPE html\u003E\u003Chtml lang=\u0022en\u0022 class=\u0022dark\u0022\u003E\u003Chead\u003E\u003Cmeta charSet=\u0022utf-8\u0022/\u003E\u003Cmeta name=\u0022viewport\u0022 content=\u0022width=device-width, initial-scale=1\u0022/\u003E\u003Clink rel=\u0022stylesheet\u0022 href=\u0022/_next/static/chunks/src_app_globals_b805903d.css\u0022 data-precedence=\u0022next_static/chunks/src_app_globals_b805903d.css\u0022/\u003E\u003Clink rel=\u0022preload\u0022 as=\u0022script\u0022 fetchPriority=\u0022low\u0022 href=\u0022/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_fd44f5a4._.js\u0022/\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_compiled_2ce9398a._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_client_8f19e6fb._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_2ecbf5fa._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_%40swc_helpers_cjs_00636ac3._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/_e69f0d32._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/_93808211._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_1a6ee436._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/src_app_layout_tsx_c0237562._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_b758c999._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cscript src=\u0022/_next/static/chunks/src_app_page_tsx_9148afbf._.js\u0022 async=\u0022\u0022\u003E\u003C/script\u003E\u003Cmeta name=\u0022theme-color\u0022 content=\u0022#6366f1\u0022/\u003E\u003Cmeta name=\u0022color-scheme\u0022 content=\u0022dark\u0022/\u003E\u003Ctitle\u003ESplitSmart AI \u2014 Simple group expense splitting\u003C/title\u003E\u003Cmeta name=\u0022description\u0022 content=\u0022Create a group, add shared expenses, and see what everyone owes.\u0022/\u003E\u003Cmeta name=\u0022author\u0022 content=\u0022SplitSmart AI\u0022/\u003E\u003Cmeta name=\u0022keywords\u0022 content=\u0022receipt splitting,expense tracker,bill splitter,splitwise alternative,UPI payments,group expenses,AI receipt scanner\u0022/\u003E\u003Cmeta name=\u0022robots\u0022 content=\u0022index, follow\u0022/\u003E\u003Cmeta property=\u0022og:title\u0022 content=\u0022SplitSmart AI\u0022/\u003E\u003Cmeta property=\u0022og:description\u0022 content=\u0022Zero-typing AI receipt splitting with real-time multiplayer claim rooms\u0022/\u003E\u003Cmeta property=\u0022og:site_name\u0022 content=\u0022SplitSmart AI\u0022/\u003E\u003Cmeta property=\u0022og:type\u0022 content=\u0022website\u0022/\u003E\u003Cmeta name=\u0022twitter:card\u0022 content=\u0022summary\u0022/\u003E\u003Cmeta name=\u0022twitter:title\u0022 content=\u0022SplitSmart AI\u0022/\u003E\u003Cmeta name=\u0022twitter:description\u0022 content=\u0022Zero-typing AI receipt splitting with real-time multiplayer claim rooms\u0022/\u003E\u003Clink rel=\u0022preconnect\u0022 href=\u0022https://fonts.googleapis.com\u0022/\u003E\u003Clink rel=\u0022preconnect\u0022 href=\u0022https://fonts.gstatic.com\u0022 crossorigin=\u0022anonymous\u0022/\u003E\u003Cscript src=\u0022/_next/static/chunks/node_modules_next_dist_build_polyfills_polyfill-nomodule.js\u0022 noModule=\u0022\u0022\u003E\u003C/script\u003E\u003C/head\u003E\u003Cbody class=\u0022bg-[hsl(224,71%,4%)] text-[hsl(210,40%,96%)] antialiased\u0022\u003E\u003Cmain class=\u0022min-h-screen\u0022\u003E\u003Cheader class=\u0022border-b border-white/[0.07]\u0022\u003E\u003Cdiv class=\u0022mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8\u0022\u003E\u003Ca class=\u0022flex items-center gap-3\u0022 aria-label=\u0022SplitSmart home\u0022 href=\u0022/\u0022\u003E\u003Cspan class=\u0022flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-teal-400 text-white\u0022\u003E\u003Csvg xmlns=\u0022http://www.w3.org/2000/svg\u0022 width=\u002218\u0022 height=\u002218\u0022 viewBox=\u00220 0 24 24\u0022 fill=\u0022currentColor\u0022 stroke=\u0022currentColor\u0022 stroke-width=\u00222\u0022 stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 class=\u0022lucide lucide-zap\u0022\u003E\u003Cpath d=\u0022M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z\u0022\u003E\u003C/path\u003E\u003C/svg\u003E\u003C/span\u003E\u003Cspan class=\u0022font-semibold tracking-tight\u0022\u003ESplitSmart\u003C/span\u003E\u003C/a\u003E\u003Ca class=\u0022inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-300 transition hover:bg-white/[0.05] hover:text-white\u0022 href=\u0022/dashboard\u0022\u003EDashboard \u003Csvg xmlns=\u0022http://www.w3.org/2000/svg\u0022 width=\u002215\u0022 height=\u002215\u0022 viewBox=\u00220 0 24 24\u0022 fill=\u0022none\u0022 stroke=\u0022currentColor\u0022 stroke-width=\u00222\u0022 stroke-linecap=\u0022round\u0022 stroke-linejoin=\u0022round\u0022 class=\u0022lucide lucide-arrow-right\u0022\u003E\u003Cpath d=\u0022M5 12h14\u0022\u003E\u003C/path\u003E\u003Cpath d=\u0022m12 5 7 7-7 7\u0022\u003E\u003C/path\u003E\u003C/svg\u003E\u003C/a\u003E\u003C/div\u003E\u003C/header\u003E\u003Csection class=\u0022mx-auto max-w-4xl px-5 pb-16 pt-20 text-center sm:px-8 sm:pt-28\u0022\u003E\u003Cp class=\u0022text-sm font-medium text-indigo-300\u0022\u003EShared expenses, made simple\u003C/p\u003E\u003Ch1 class=\u0022mt-5 text-4xl font-semibold tr\n\u2026[truncated]",
+        "durationMs": 8424
+      }
+    ],
+    "executions": [
+      {
+        "source": "setup[0]",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "ci"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "type-check",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "type-check"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "lint",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "lint"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "tests-pass",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "test"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "production-build",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "build"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      },
+      {
+        "source": "home-route-http-200",
+        "resolvedExecutable": "C:\\Program Files\\nodejs\\npm.CMD",
+        "args": [
+          "run",
+          "dev",
+          "--",
+          "--hostname",
+          "127.0.0.1",
+          "--port",
+          "3000"
+        ],
+        "cwd": "D:\\SplitSmart-AI\\apps\\web",
+        "env": {},
+        "prependPath": [],
+        "platform": "win32"
+      }
+    ]
+  }
+}

@@ -6,26 +6,29 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "lint": "eslint src tests next.config.ts",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "lucide-react": "^0.460.0",
-    "next": "^15.3.3",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "lucide-react": "^1.76.0",
+    "next": "^16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.0.0",
     "eslint-config-next": "15.0.3",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.15",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "vite": "^8.3.8",
+    "vitest": "latest"
   }
 }
