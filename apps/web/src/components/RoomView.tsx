@@ -312,6 +312,7 @@ export default function RoomView({ roomCode: rawRoomCode }: { roomCode: string }
                   {finalizing ? <LoaderCircle size={16} className="animate-spin" /> : <Check size={16} />}
                   Finalize split
                 </button>
+                {error && <p role="alert" className="mt-3 text-xs text-rose-300">{error}</p>}
                 {!allItemsClaimed && <p className="mt-2 text-xs text-slate-600">Every receipt item needs at least one claimant.</p>}
               </section>
             )}

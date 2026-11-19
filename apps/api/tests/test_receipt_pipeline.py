@@ -38,6 +38,40 @@ from app.services.vision_ocr import (
 # ─────────────────────────────────────────────────────────────────────────────
 
 class TestMockOCRExtraction:
+    @pytest.mark.parametrize(
+        ("filename", "expected_subtotal_paise", "expected_total_paise"),
+        [
+            ("restaurant_bill.jpg", 460000, 532000),
+            ("blinkit_grocery_order.jpg", 123200, 120300),
+        ],
+    )
+    def test_mock_receipt_totals_match_line_items(
+        self,
+        tmp_path: Path,
+        filename: str,
+        expected_subtotal_paise: int,
+        expected_total_paise: int,
+    ):
+        image = tmp_path / filename
+        image.write_bytes(b"mock")
+        receipt = _mock_extract(image)
+        paise = receipt.to_paise()
+
+        item_subtotal = sum(
+            round(item.total_price_rupees * 100) for item in receipt.line_items
+        )
+        computed_total = (
+            paise["subtotal_paise"]
+            + paise["tax_paise"]
+            + paise["service_charge_paise"]
+            + paise["delivery_fee_paise"]
+            - paise["discount_paise"]
+        )
+
+        assert item_subtotal == expected_subtotal_paise
+        assert paise["subtotal_paise"] == item_subtotal
+        assert computed_total == paise["total_paise"] == expected_total_paise
+
     def test_restaurant_mock_returns_valid_receipt(self, tmp_path: Path):
         img = tmp_path / "restaurant_bill.jpg"
         img.write_bytes(b"fake-image-bytes")

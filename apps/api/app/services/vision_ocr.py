@@ -187,12 +187,12 @@ def _mock_extract(image_path: Path) -> OCRExtractedReceipt:
                 OCRLineItem(item_name="Lays Classic Chips (Pack of 5)", quantity=1, unit_price_rupees=180.0, category="grocery"),
                 OCRLineItem(item_name="Maggi Noodles (6-pack)", quantity=1, unit_price_rupees=132.0, category="grocery"),
             ],
-            subtotal_rupees=1237.0,
+            subtotal_rupees=1232.0,
             tax_rupees=22.0,
             service_charge_rupees=0.0,
             delivery_fee_rupees=29.0,
             discount_rupees=80.0,
-            total_rupees=1208.0,
+            total_rupees=1203.0,
         )
 
     # Default: restaurant bill
@@ -213,12 +213,12 @@ def _mock_extract(image_path: Path) -> OCRExtractedReceipt:
             OCRLineItem(item_name="Filter Coffee", quantity=3, unit_price_rupees=80.0, category="beverage"),
             OCRLineItem(item_name="Mineral Water (1L)", quantity=2, unit_price_rupees=40.0, category="beverage"),
         ],
-        subtotal_rupees=4660.0,
-        tax_rupees=466.0,   # 5% GST + SGST
-        service_charge_rupees=466.0,  # 10% service charge
+        subtotal_rupees=4600.0,
+        tax_rupees=460.0,   # 5% GST + SGST
+        service_charge_rupees=460.0,  # 10% service charge
         delivery_fee_rupees=0.0,
         discount_rupees=200.0,  # loyalty discount
-        total_rupees=5392.0,
+        total_rupees=5320.0,
     )
 
 
