@@ -124,10 +124,11 @@ async def test_chat_returns_not_found_for_unknown_group(monkeypatch):
 
 
 def test_chat_route_is_mounted_with_ai_rate_limit():
+    assert "/api/v1/copilot/chat" in app.openapi()["paths"]
     route = next(
         route
-        for route in app.routes
-        if getattr(route, "path", None) == "/api/v1/copilot/chat"
+        for route in copilot.router.routes
+        if getattr(route, "path", None) == "/copilot/chat"
     )
 
     assert "POST" in route.methods

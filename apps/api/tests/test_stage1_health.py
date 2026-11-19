@@ -74,8 +74,8 @@ def test_fastapi_app_creates():
     from app.main import create_app
     app = create_app()
     assert app.title == "SplitSmart AI"
-    # Verify all expected routes exist
-    routes = {r.path for r in app.routes}  # type: ignore[attr-defined]
+    # Inspect the public route schema instead of FastAPI's internal route objects.
+    routes = app.openapi()["paths"]
     assert "/api/v1/health" in routes
     assert "/api/v1/sandbox/init" not in routes
     assert "/api/v1/groups" in routes

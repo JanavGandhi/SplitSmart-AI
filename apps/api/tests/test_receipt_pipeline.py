@@ -394,26 +394,15 @@ class TestReceiptUploadEndpoint:
         )
         assert response.status_code == 422
 
-    async def test_sse_endpoint_content_type(self, async_client: AsyncClient):
-        """
-        Verify the SSE endpoint returns text/event-stream media type.
-        We inspect the route response class directly to avoid consuming
-        the infinite-loop async generator in tests.
-        """
+    async def test_sse_endpoint_is_registered(self):
+        """Verify the SSE endpoint is mounted in the generated API schema."""
         import inspect
 
         from app.api.v1.receipts import receipt_events
-
-        # The function should be an async function returning a StreamingResponse
-        assert inspect.iscoroutinefunction(receipt_events)
-
-        # Check route is registered with the correct path
         from app.main import app
-        sse_routes = [
-            r for r in app.routes
-            if hasattr(r, "path") and "/events" in r.path
-        ]
-        assert len(sse_routes) >= 1, "SSE route not registered"
+
+        assert inspect.iscoroutinefunction(receipt_events)
+        assert "get" in app.openapi()["paths"]["/api/v1/receipts/{receipt_id}/events"]
 
     async def test_sse_invalid_uuid_returns_400(self, async_client: AsyncClient):
         """GET /receipts/invalid/events should return 400."""
