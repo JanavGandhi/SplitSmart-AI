@@ -219,5 +219,5 @@ export interface HealthResponse {
   timestamp: number;
   db: string;
   redis: string;
-  ocr_mode: "mock" | "gemini";
+  ocr_mode: "mock" | "groq";
 }

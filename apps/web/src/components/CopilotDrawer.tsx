@@ -94,7 +94,7 @@ export default function CopilotDrawer({ groupId }: { groupId: string }) {
                 <button type="submit" disabled={!message.trim() || sending} aria-label="Send message" className="rounded-lg bg-indigo-500 p-2 text-white disabled:opacity-40"><Send size={15} /></button>
               </div>
               <p className="mt-2 text-[10px] leading-relaxed text-slate-500">
-                Your question and this group’s names, balances, and recent receipt totals are sent to the configured Google Gemini service.
+                Your question and this group’s names, balances, and recent receipt totals are sent to the configured Groq service.
               </p>
             </form>
           </aside>

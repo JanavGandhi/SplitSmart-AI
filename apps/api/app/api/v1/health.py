@@ -26,7 +26,7 @@ async def health_check():
         "timestamp": time.time(),
         "db": "disconnected",
         "redis": "disconnected",
-        "ocr_mode": "mock" if settings.use_mock_ocr else "gemini",
+        "ocr_mode": "mock" if settings.use_mock_ocr else "groq",
     }
 
     # Check PostgreSQL

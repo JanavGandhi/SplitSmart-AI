@@ -51,10 +51,10 @@ async def chat(
     db: AsyncSession = Depends(get_db),
 ) -> CopilotChatResponse:
     settings = get_settings()
-    if not settings.gemini_api_key:
+    if not settings.groq_api_key:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Copilot is not configured. Set GEMINI_API_KEY to enable it.",
+            detail="Copilot is not configured. Set GROQ_API_KEY to enable it.",
         )
 
     group_result = await db.execute(select(Group).where(Group.id == payload.group_id))
@@ -118,7 +118,7 @@ async def chat(
                 generate_reply,
                 payload.message,
                 group_context,
-                settings.gemini_api_key,
+                settings.groq_api_key,
             ),
             timeout=30,
         )

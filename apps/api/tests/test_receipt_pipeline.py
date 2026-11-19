@@ -4,7 +4,7 @@ Stage 3 Integration Tests — Receipt Pipeline (Mock OCR mode).
 Tests verify the complete pipeline without:
   - A live database (uses in-memory SQLite via SQLAlchemy)
   - A live Redis instance
-  - A real Gemini API key
+  - A real Groq API key
 
 What's covered:
   1. vision_ocr.py — Mock extraction produces valid OCRExtractedReceipt
@@ -21,11 +21,14 @@ import io
 import json
 import uuid
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from PIL import Image
 
+from app.services import vision_ocr
 from app.services.vision_ocr import (
     OCRExtractedReceipt,
     OCRLineItem,
@@ -110,6 +113,49 @@ class TestMockOCRExtraction:
         img.write_bytes(b"fake")
         result = extract_receipt(img, api_key="fake-key-123", use_mock=True)
         assert isinstance(result, OCRExtractedReceipt)
+
+    def test_extract_sends_image_to_groq_and_parses_receipt(self, tmp_path, monkeypatch):
+        image_path = tmp_path / "receipt.png"
+        Image.new("RGB", (2, 2), color="white").save(image_path)
+        captured = {}
+        receipt_data = {
+            "merchant_name": "Cafe",
+            "receipt_date": None,
+            "line_items": [],
+            "subtotal_rupees": 100.0,
+            "tax_rupees": 5.0,
+            "service_charge_rupees": 0.0,
+            "delivery_fee_rupees": 0.0,
+            "discount_rupees": 0.0,
+            "total_rupees": 105.0,
+        }
+
+        class FakeCompletions:
+            def create(self, **kwargs):
+                captured["request"] = kwargs
+                return SimpleNamespace(
+                    choices=[
+                        SimpleNamespace(
+                            message=SimpleNamespace(content=json.dumps(receipt_data))
+                        )
+                    ]
+                )
+
+        class FakeGroq:
+            def __init__(self, api_key):
+                captured["api_key"] = api_key
+                self.chat = SimpleNamespace(completions=FakeCompletions())
+
+        monkeypatch.setattr(vision_ocr, "Groq", FakeGroq)
+
+        result = extract_receipt(image_path, api_key="configured-key")
+
+        assert result.merchant_name == "Cafe"
+        assert captured["api_key"] == "configured-key"
+        assert captured["request"]["model"] == "qwen/qwen3.8-27b"
+        assert captured["request"]["response_format"] == {"type": "json_object"}
+        image_content = captured["request"]["messages"][0]["content"][1]
+        assert image_content["image_url"]["url"].startswith("data:image/jpeg;base64,")
 
 
 # ─────────────────────────────────────────────────────────────────────────────

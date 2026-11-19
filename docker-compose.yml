@@ -45,7 +45,7 @@ services:
       CELERY_BROKER_URL: redis://redis:6379/1
       CELERY_RESULT_BACKEND: redis://redis:6379/2
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-development-only-change-before-deploy}
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
       CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
       MAX_UPLOAD_SIZE_MB: 10
       UPLOAD_DIR: /app/uploads
@@ -81,7 +81,7 @@ services:
       CELERY_BROKER_URL: redis://redis:6379/1
       CELERY_RESULT_BACKEND: redis://redis:6379/2
       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-development-only-change-before-deploy}
-      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
       MAX_UPLOAD_SIZE_MB: 10
       UPLOAD_DIR: /app/uploads
     command: ["celery", "-A", "app.worker.celery_app", "worker", "--loglevel=info"]

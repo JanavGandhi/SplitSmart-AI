@@ -47,7 +47,7 @@ async def test_chat_sends_only_group_summary_to_configured_provider(monkeypatch)
     monkeypatch.setattr(
         copilot,
         "get_settings",
-        lambda: SimpleNamespace(gemini_api_key="configured-key"),
+        lambda: SimpleNamespace(groq_api_key="configured-key"),
     )
     captured = {}
 
@@ -86,7 +86,7 @@ async def test_chat_sends_only_group_summary_to_configured_provider(monkeypatch)
 
 
 @pytest.mark.asyncio
-async def test_chat_requires_gemini_configuration(monkeypatch):
+async def test_chat_requires_groq_configuration(monkeypatch):
     class UnusedDatabase:
         async def execute(self, statement):
             raise AssertionError("database should not be queried without a provider key")
@@ -94,7 +94,7 @@ async def test_chat_requires_gemini_configuration(monkeypatch):
     monkeypatch.setattr(
         copilot,
         "get_settings",
-        lambda: SimpleNamespace(gemini_api_key=""),
+        lambda: SimpleNamespace(groq_api_key=""),
     )
     with pytest.raises(HTTPException) as error:
         await chat(
@@ -103,7 +103,7 @@ async def test_chat_requires_gemini_configuration(monkeypatch):
         )
 
     assert error.value.status_code == 503
-    assert "GEMINI_API_KEY" in error.value.detail
+    assert "GROQ_API_KEY" in error.value.detail
 
 
 @pytest.mark.asyncio
@@ -111,7 +111,7 @@ async def test_chat_returns_not_found_for_unknown_group(monkeypatch):
     monkeypatch.setattr(
         copilot,
         "get_settings",
-        lambda: SimpleNamespace(gemini_api_key="configured-key"),
+        lambda: SimpleNamespace(groq_api_key="configured-key"),
     )
 
     with pytest.raises(HTTPException) as error:
@@ -137,17 +137,22 @@ def test_chat_route_is_mounted_with_ai_rate_limit():
     )
 
 
-def test_gemini_provider_receives_group_summary_and_returns_text(monkeypatch):
+def test_groq_provider_receives_group_summary_and_returns_text(monkeypatch):
     observed = {}
 
-    class FakeModel:
-        def generate_content(self, prompt, generation_config):
-            observed["prompt"] = prompt
-            observed["generation_config"] = generation_config
-            return SimpleNamespace(text="  Group summary  ")
+    class FakeCompletions:
+        def create(self, **kwargs):
+            observed.update(kwargs)
+            return SimpleNamespace(
+                choices=[SimpleNamespace(message=SimpleNamespace(content="  Group summary  "))]
+            )
 
-    monkeypatch.setattr(ai_copilot.genai, "configure", lambda **kwargs: observed.update(kwargs))
-    monkeypatch.setattr(ai_copilot.genai, "GenerativeModel", lambda model: FakeModel())
+    class FakeGroq:
+        def __init__(self, api_key):
+            observed["api_key"] = api_key
+            self.chat = SimpleNamespace(completions=FakeCompletions())
+
+    monkeypatch.setattr(ai_copilot, "Groq", FakeGroq)
 
     reply = ai_copilot.generate_reply(
         "Summarize",
@@ -157,5 +162,6 @@ def test_gemini_provider_receives_group_summary_and_returns_text(monkeypatch):
 
     assert reply == "Group summary"
     assert observed["api_key"] == "configured-key"
-    assert '"group_name": "Trip"' in observed["prompt"]
-    assert observed["generation_config"]["max_output_tokens"] == 400
+    assert observed["model"] == "openai/gpt-oss-120b"
+    assert '"group_name": "Trip"' in observed["messages"][0]["content"]
+    assert observed["max_completion_tokens"] == 400

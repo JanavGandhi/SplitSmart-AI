@@ -50,7 +50,7 @@ async def lifespan(app: FastAPI):
     logger.info(
         "SplitSmart AI starting up",
         env=settings.app_env,
-        ocr_mode="mock" if settings.use_mock_ocr else "gemini",
+        ocr_mode="mock" if settings.use_mock_ocr else "groq",
     )
 
     # Initialize async DB engine

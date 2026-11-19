@@ -18,7 +18,7 @@
 Splitting group bills today is broken. Traditional tools like Splitwise require tedious manual item entry, suffer from floating-point rounding errors on shared discounts and taxes, and fail to handle real-time party bills without requiring everyone to sign up and download an app.
 
 **SplitSmart AI** solves this with 4 core engineering innovations:
-1. **Zero-Typing Vision AI Pipeline:** Upload a photo of any crumpled bill or receipt; Google Gemini 2.0 Flash extracts line items, quantities, taxes, and service fees asynchronously via Celery and streams progress via Server-Sent Events (SSE).
+1. **Zero-Typing Vision AI Pipeline:** Upload a photo of any crumpled bill or receipt; Groq vision extracts line items, quantities, taxes, and service fees asynchronously via Celery and streams progress via Server-Sent Events (SSE).
 2. **No-Login Multiplayer Claim Rooms:** Share a short link or QR code. Roommates and friends join instantly as guests via scoped JWTs, claim their items live over Redis-backed WebSockets, and watch totals update in real time.
 3. **Exact Paise/Cent Integer Arithmetic (Zero-Leak Guarantee):** Zero floating-point representation in the database. All amounts are stored as `BIGINT` minor units (paise/cents). Tax and discounts are distributed proportionally using the **Hare-Niemeyer Largest Remainder Method**, ensuring $\sum \text{Member Shares} \equiv \text{Bill Total}$ down to the last paise.
 4. **Min-Cash-Flow Debt Simplification ($O(N \log N)$):** Multi-day trips often create tangled webs of pairwise debts (e.g. 11 transactions between 5 friends). Our dual max-heap min-cash-flow algorithm collapses this into the minimum possible transactions (e.g. 4 payments), complete with **NPCI-compliant UPI deep links** and QR codes.
@@ -47,7 +47,7 @@ Splitting group bills today is broken. Traditional tools like Splitwise require 
 │             ▼                          ▼                       ▼           │
 │  ┌──────────────────────┐   ┌──────────────────────┐  ┌─────────────────┐  │
 │  │   Celery Workers     │   │ SQLAlchemy 2 (Async) │  │ Redis 7 Broker  │  │
-│  │ (Gemini 2.0 Vision)  │   │  asyncpg Connection  │  │   & Pub/Sub     │  │
+│  │ (Groq Vision)        │   │  asyncpg Connection  │  │   & Pub/Sub     │  │
 │  └──────────────────────┘   └──────────┬───────────┘  └─────────────────┘  │
 └────────────────────────────────────────┼───────────────────────────────────┘
                                          ▼
@@ -68,8 +68,8 @@ flowchart LR
     API -->|receipt jobs| Worker[Celery worker]
     Worker -->|receipt status and claims| Postgres
     Worker -->|progress events| Redis
-    API -. configured Copilot requests .-> Gemini[Google Gemini API]
-    Worker -. configured OCR requests .-> Gemini
+    API -. configured Copilot requests .-> Groq[Groq API]
+    Worker -. configured OCR requests .-> Groq
 ```
 
 ---
@@ -167,7 +167,7 @@ docker compose up --build
 
 Open the web app at [http://localhost:3000](http://localhost:3000), API docs at [http://localhost:8000/api/docs](http://localhost:8000/api/docs), and health status at [http://localhost:8000/api/v1/health](http://localhost:8000/api/v1/health). The Compose stack runs PostgreSQL, Redis, FastAPI, the Celery worker, and Next.js; the API applies Alembic migrations during startup.
 
-To enable live Gemini OCR and Copilot responses, set `GEMINI_API_KEY` in your shell or a root `.env` file before starting. Without the key, OCR uses its configured mock mode and Copilot returns an explicit `503`. Copilot questions and a minimal group summary (member names, balances, and recent receipt totals) are sent to Google Gemini when configured. Do not use the development Compose defaults in production.
+To enable live receipt OCR and Copilot responses, set `GROQ_API_KEY` in your shell or a root `.env` file before starting. Without the key, OCR uses its configured mock mode and Copilot returns an explicit `503`. Copilot questions and a minimal group summary (member names, balances, and recent receipt totals) are sent to Groq when configured. Receipt OCR uses Groq's `qwen/qwen3.8-27b` vision model, currently listed as preview; review Groq's model availability before production use. Do not use the development Compose defaults in production.
 
 Stop the stack with `docker compose down`; add `-v` only if you intend to delete its database, Redis, and uploaded-receipt data.
 
@@ -231,9 +231,9 @@ ruff check app tests
 |---|---|:---:|---|
 | **Stage 1** | Monorepo Scaffolding, Docker & Database Layer | 🟢 Completed | PostgreSQL 16 (pgvector), Redis 7, SQLAlchemy 2 Async, Alembic migrations, Next.js 15 scaffold. |
 | **Stage 2** | Core Math Engine & Debt Simplifier | 🟢 Completed | Largest Remainder Method, Min-Cash-Flow algorithm, and UPI QR codes. |
-| **Stage 3** | Async Vision AI Receipt Pipeline & SSE | 🟢 Completed | Gemini 2.0 Flash OCR, Celery asynchronous processing queue, live Server-Sent Events progress tracking. |
+| **Stage 3** | Async Vision AI Receipt Pipeline & SSE | 🟢 Completed | Groq Vision OCR, Celery asynchronous processing queue, live Server-Sent Events progress tracking. |
 | **Stage 4** | Multiplayer No-Login WebSocket Claim Room | 🟢 Completed | Room-scoped guest JWTs, Redis Pub/Sub claims, paise recalculation, roommate simulator, and idempotent ledger finalization. |
-| **Stage 5** | Next.js UI & Interactive Graphs | 🟡 Implemented | Dashboard, live claim room, group debt graph, UPI payment flow, and metrics. The live walkthrough needs the Docker Compose stack and a configured Gemini key for Copilot. |
+| **Stage 5** | Next.js UI & Interactive Graphs | 🟡 Implemented | Dashboard, live claim room, group debt graph, UPI payment flow, and metrics. The live walkthrough needs the Docker Compose stack and a configured Groq key for AI features. |
 | **Stage 6** | CI/CD & Production Readiness | 🟡 Implemented | Redis sliding-window limits, GitHub Actions checks, and one-command Docker Compose stack. Deployment-specific hardening remains out of scope. |
 
 ### Stage 4 room API
@@ -249,8 +249,8 @@ ruff check app tests
 - `GET /api/v1/groups/{group_id}/receipts` loads the group's receipts and claim data.
 - `POST /api/v1/ledger/upi-intent` returns a UPI URI and an inline SVG QR code. Recording a settlement does not verify a bank transfer.
 - `GET /api/v1/metrics` returns database-derived counts.
-- `POST /api/v1/copilot/chat` uses Gemini with a minimal group summary when `GEMINI_API_KEY` is configured; it returns HTTP 503 when no key is set.
-- The Copilot drawer discloses that the user’s question and group summary are sent to Google Gemini.
+- `POST /api/v1/copilot/chat` uses Groq with a minimal group summary when `GROQ_API_KEY` is configured; it returns HTTP 503 when no key is set.
+- The Copilot drawer discloses that the user’s question and group summary are sent to Groq.
 - Copilot requests are limited to 10/minute per IP, and receipt uploads to 20/hour per IP. Redis must be available; requests fail closed if it is not.
 
 The Stage 5 pages are `/dashboard`, `/groups/{id}`, `/room/{code}`, and `/metrics`. A complete live walkthrough needs the API, PostgreSQL, and Redis running.

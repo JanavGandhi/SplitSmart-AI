@@ -1,18 +1,17 @@
-"""Group-aware Gemini service for the SplitSmart Copilot."""
+"""Group-aware Groq service for the SplitSmart Copilot."""
 from __future__ import annotations
 
 import json
 
-import google.generativeai as genai
-from google.api_core.exceptions import GoogleAPIError
+from groq import APIError, Groq
 
 
 class CopilotProviderError(RuntimeError):
-    """Raised when Gemini cannot produce a usable answer."""
+    """Raised when Groq cannot produce a usable answer."""
 
 
 def generate_reply(message: str, group_context: dict, api_key: str) -> str:
-    genai.configure(api_key=api_key)
+    client = Groq(api_key=api_key)
     prompt = (
         "You are SplitSmart Copilot, an assistant for understanding a group's "
         "receipt splits and ledger. Answer using only the supplied group data. "
@@ -26,21 +25,18 @@ def generate_reply(message: str, group_context: dict, api_key: str) -> str:
     )
 
     try:
-        response = genai.GenerativeModel("gemini-2.0-flash").generate_content(
-            prompt,
-            generation_config={"temperature": 0.2, "max_output_tokens": 400},
+        response = client.chat.completions.create(
+            model="openai/gpt-oss-120b",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            max_completion_tokens=400,
         )
-    except GoogleAPIError as exc:
+    except APIError as exc:
         raise CopilotProviderError(
-            "The configured Gemini service could not complete the request."
+            "The configured Groq service could not complete the request."
         ) from exc
 
-    try:
-        reply = getattr(response, "text", None)
-    except ValueError as exc:
-        raise CopilotProviderError(
-            "The configured Gemini service returned no answer."
-        ) from exc
+    reply = response.choices[0].message.content if response.choices else None
     if not isinstance(reply, str) or not reply.strip():
-        raise CopilotProviderError("The configured Gemini service returned no answer.")
+        raise CopilotProviderError("The configured Groq service returned no answer.")
     return reply.strip()

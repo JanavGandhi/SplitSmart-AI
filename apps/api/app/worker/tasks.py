@@ -108,7 +108,7 @@ def process_receipt(self, receipt_id: str, image_path: str, group_id: str) -> di
 
     Stages:
       1. UPLOADING   → File saved, DB record created (done before task dispatch)
-      2. OCR_EXTRACTING → Send image to Gemini Vision (or mock)
+      2. OCR_EXTRACTING → Send image to Groq Vision (or mock)
       3. VALIDATING_MATH → Run math engine validation on extracted data
       4. READY_FOR_CLAIMS → Write line items to DB, update receipt status
 
@@ -124,7 +124,7 @@ def process_receipt(self, receipt_id: str, image_path: str, group_id: str) -> di
         publish(
             "STAGE_UPDATE",
             stage="OCR_EXTRACTING",
-            message="Sending receipt to Gemini Vision AI for extraction...",
+            message="Sending receipt to Groq Vision AI for extraction...",
             progress=25,
         )
 
@@ -132,7 +132,7 @@ def process_receipt(self, receipt_id: str, image_path: str, group_id: str) -> di
 
         extracted = extract_receipt(
             image_path=Path(image_path),
-            api_key=settings.gemini_api_key,
+            api_key=settings.groq_api_key,
             use_mock=settings.use_mock_ocr,
         )
 

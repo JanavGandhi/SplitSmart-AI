@@ -51,12 +51,12 @@ class Settings(BaseSettings):
         return [origin.strip() for origin in self.cors_origins.split(",")]
 
     # ── AI ───────────────────────────────────────────────────────
-    gemini_api_key: str = ""
+    groq_api_key: str = ""
 
     @property
     def use_mock_ocr(self) -> bool:
-        """Use mock OCR when no Gemini API key is configured."""
-        return not self.gemini_api_key or self.gemini_api_key == "your-google-ai-studio-key-here"
+        """Use mock OCR when no Groq API key is configured."""
+        return not self.groq_api_key
 
     # ── File Upload ───────────────────────────────────────────────
     max_upload_size_mb: int = 10

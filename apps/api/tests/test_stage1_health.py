@@ -14,16 +14,16 @@ def test_app_config_loads():
 
 
 def test_settings_mock_ocr_without_key():
-    """With empty GEMINI_API_KEY, use_mock_ocr should be True."""
+    """With empty GROQ_API_KEY, use_mock_ocr should be True."""
     from app.config import Settings
-    settings = Settings(gemini_api_key="")
+    settings = Settings(groq_api_key="")
     assert settings.use_mock_ocr is True
 
 
 def test_settings_real_ocr_with_key():
-    """With a real GEMINI_API_KEY, use_mock_ocr should be False."""
+    """With a configured GROQ_API_KEY, use_mock_ocr should be False."""
     from app.config import Settings
-    settings = Settings(gemini_api_key="AIzaSy-valid-key-here-xxx")
+    settings = Settings(groq_api_key="gsk-test-key")
     assert settings.use_mock_ocr is False
 
 

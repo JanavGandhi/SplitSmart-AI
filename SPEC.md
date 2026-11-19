@@ -12,7 +12,7 @@ SplitSmart AI is a production-grade, scalable, real-time multiplayer receipt-spl
 
 | # | Feature | Technology |
 |---|---------|------------|
-| 1 | **Zero-Typing Vision AI Receipt Parser** | Gemini 2.0 Flash + Celery async workers + SSE streaming |
+| 1 | **Zero-Typing Vision AI Receipt Parser** | Groq vision + Celery async workers + SSE streaming |
 | 2 | **No-Login Multiplayer Claim Room** | WebSockets + Redis Pub/Sub + scoped guest JWT |
 | 3 | **Exact Paise/Cent Ledger + Min-Cash-Flow Debt Graph** | Integer arithmetic + graph theory O(N log N) |
 | 4 | **1-Click Recruiter Guest Sandbox + Public Telemetry** | Pre-seeded demo data + /metrics observability |
@@ -28,7 +28,7 @@ SplitSmart AI is a production-grade, scalable, real-time multiplayer receipt-spl
 - **Migrations:** Alembic
 - **Validation:** Pydantic v2
 - **Task Queue:** Celery + Redis broker
-- **AI:** Google Gemini API (gemini-2.0-flash)
+- **AI:** Groq API (Qwen vision for receipt OCR; GPT OSS for Copilot)
 - **Testing:** pytest + pytest-asyncio
 
 ### Frontend
@@ -278,8 +278,9 @@ Returns: `uri: str` + `qr_base64: str` (base64 SVG QR)
 - `GET /api/v1/groups/{group_id}/receipts` returns receipt and claim data for the group view.
 - `POST /api/v1/ledger/upi-intent` returns a UPI deep link and SVG QR payload. A recorded settlement is not proof of bank transfer.
 - `GET /api/v1/metrics` returns counts queried from the database.
-- `POST /api/v1/copilot/chat` uses Gemini with a minimal group summary when `GEMINI_API_KEY` is configured; without it, the route returns 503.
-- The Copilot drawer discloses that the user's question and the group's names, balances, and recent receipt totals are sent to Google Gemini.
+- `POST /api/v1/copilot/chat` uses Groq with a minimal group summary when `GROQ_API_KEY` is configured; without it, the route returns 503.
+- The Copilot drawer discloses that the user's question and the group's names, balances, and recent receipt totals are sent to Groq.
+- Receipt OCR uses Groq's `qwen/qwen3.8-27b` vision model, which is currently listed as preview.
 - Stage 5 routes: `/dashboard`, `/groups/{id}`, `/room/{code}`, and `/metrics`.
 
 ### Stage 6 Rate Limits and Delivery
@@ -308,7 +309,7 @@ JWT_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
 
 # AI
-GEMINI_API_KEY=your-google-ai-studio-key-here
+GROQ_API_KEY=your-groq-api-key-here
 
 # App
 APP_ENV=development
@@ -329,5 +330,5 @@ RATE_LIMIT_UPLOAD_PER_HOUR=20
 | Stage 2: Math Engine + Sandbox | Completed | - |
 | Stage 3: Vision AI + SSE | Completed | - |
 | Stage 4: WebSocket Claim Room | Completed | Guest JWT, Redis Pub/Sub claims, and idempotent finalization |
-| Stage 5: Next.js Frontend | Implemented | UI/API code complete; full live walkthrough needs the Docker Compose stack and a Gemini key for Copilot. |
+| Stage 5: Next.js Frontend | Implemented | UI/API code complete; full live walkthrough needs the Docker Compose stack and a Groq key for AI features. |
 | Stage 6: CI/CD + Production | Implemented | Redis sliding-window limits, GitHub Actions checks, and one-command Compose stack; live Docker walkthrough remains unverified here. |

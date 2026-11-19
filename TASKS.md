@@ -102,8 +102,8 @@
 - [x] `worker/tasks.py` — Full receipt processing pipeline task: UPLOADING → OCR_EXTRACTING → VALIDATING_MATH → READY_FOR_CLAIMS
 
 ### 3.2 Vision OCR Service
-- [x] `services/vision_ocr.py` — Gemini Vision structured extraction (gemini-2.0-flash)
-- [x] Mock OCR fallback when GEMINI_API_KEY not set (restaurant + grocery variants)
+- [x] `services/vision_ocr.py` — Groq Vision structured extraction (qwen/qwen3.8-27b; preview model)
+- [x] Mock OCR fallback when GROQ_API_KEY not set (restaurant + grocery variants)
 - [x] Pydantic output schema (OCRExtractedReceipt + OCRLineItem) with field coercion
 
 ### 3.3 Receipt Upload API
@@ -168,7 +168,7 @@
 - [x] AvatarPill — Colored participant indicator
 - [x] DebtGraph — SVG node-link visualization (raw vs simplified)
 - [x] UPISettleModal — QR code + deep link button
-- [x] CopilotDrawer — Chat interface with configured Gemini backend
+- [x] CopilotDrawer — Chat interface with configured Groq backend
 - [x] MetricsDashboard — Live stats
 
 ### 5.3 Hooks
@@ -183,7 +183,7 @@
 - [ ] Full backend-connected walkthrough: demo → receipt room → finalize → debt graph → settle (not run: Docker is unavailable in the environment)
 - [x] User approved proceeding to Stage 6
 
-Stage 5 pages and API integrations are implemented. The backend-connected walkthrough requires the Docker Compose stack; Copilot additionally requires `GEMINI_API_KEY`.
+Stage 5 pages and API integrations are implemented. The backend-connected walkthrough requires the Docker Compose stack; OCR and Copilot additionally require `GROQ_API_KEY`.
 
 | Date | Stage | Action | Result |
 |------|-------|--------|--------|
@@ -219,4 +219,4 @@ Stage 5 pages and API integrations are implemented. The backend-connected walkth
 |------|-------|--------|--------|
 | 2026-10-17 | Stage 1 | Created SPEC.md + TASKS.md | ✅ Done |
 | 2026-10-17 | Stage 1 | Created docker-compose.yml | In progress |
-| 2026-11-16 | Stage 6 | Added Gemini Copilot API, Redis rate limits, CI workflow, and full-stack Compose setup | ✅ Tests/builds pass; live Docker walkthrough remains pending |
+| 2026-11-16 | Stage 6 | Added AI Copilot API, Redis rate limits, CI workflow, and full-stack Compose setup | ✅ Tests/builds pass; live Docker walkthrough remains pending |
